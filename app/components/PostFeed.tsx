@@ -1,0 +1,89 @@
+"use client"
+
+import PostInput from "./PostInput";
+import POST from "./Post";
+import { useEffect, useState } from 'react';
+import type { Post } from '@/types';
+
+export default function PostFeed() {
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                setIsLoading(true)
+                const response = await fetch('/api/posts')
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch posts')
+                }
+
+                const data = await response.json()
+                setPosts(data.posts || [])
+            } catch (err) {
+                console.error('Error fetching posts:', err)
+                setError(err instanceof Error ? err.message : 'Failed to load posts')
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchPosts();
+    }, [])
+
+    if (isLoading) {
+        return (
+            <div className="text-center py-12">
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-brand border-r-transparent"></div>
+                <p className="text-muted mt-4">Loading posts...</p>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="text-center py-12">
+                <p className="text-red-400 text-lg">{error}</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="mt-4 px-4 py-2 bg-brand rounded-lg hover:brightness-110"
+                >
+                    Retry
+                </button>
+            </div>
+        )
+    }
+
+
+    console.log(posts)
+
+    return (
+        <div className="flex-grow max-w-2xl border-x border-gray-100 min-h-screen">
+            <div className="py-4 px-3 text-lg sm:text-xl sticky top-0 z-50
+            bg-white bg-opacity-80 backdrop-blur-sm font-bold 
+            border-b border-gray-100"
+            >
+                Home
+            </div>
+            <PostInput />
+
+            {isLoading ? (
+                <div className="p-10 text-center animate-pulse">Loading...</div>
+            ) :
+                (posts && posts.length > 0) ? (
+                    posts.map((post) => (
+                        <div key={post.id}>
+                            <POST post={post} id={post.id} />
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-12">
+                        <p className="text-gray-900 text-lg font-bold">No posts yet</p>
+                        <p className="text-gray-500 mt-2">Be the first to share something!</p>
+                    </div>
+                )}
+        </div>
+    );
+}

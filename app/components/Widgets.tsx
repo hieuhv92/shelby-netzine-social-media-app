@@ -1,0 +1,147 @@
+import { EllipsisHorizontalCircleIcon, EllipsisHorizontalIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
+
+export default function Widgets() {
+    return (
+        // QUAN TRỌNG: sticky top-0 và h-screen giúp cột dính lại khi scroll
+        <div className="p-3 hidden lg:flex flex-col space-y-4 w-[400px] pl-10 sticky top-0 h-screen overflow-y-auto scrollbar-hide">
+
+            {/* 1. Search input - Nên có background trắng và sticky để luôn nằm trên cùng */}
+            <div className="sticky top-0 bg-white py-2 z-20">
+                <div className="flex bg-[#EFF3F4] text-[#89959D] h-[44px] items-center space-x-3 rounded-full pl-5 border border-transparent focus-within:border-[#F4AF01] focus-within:bg-white transition-all">
+                    <MagnifyingGlassIcon className="w-[20px] h-[20px]" />
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        className="bg-transparent outline-none text-black w-full"
+                    />
+                </div>
+            </div>
+
+            {/* 2. What's Happening? */}
+            <div className="bg-[#F7F9F9] rounded-2xl p-3">
+                <h1 className="text-xl font-bold mb-2">What's Happening?</h1>
+                {/* ReactJS Trending */}
+                <div className="flex flex-col py-3  space-y-0.5">
+                    <div className="flex justify-between text-[#536471] text-[13px]">
+                        <span>Trending in Global</span>
+                        <EllipsisHorizontalIcon className="w-[20px]" />
+                    </div>
+                    <span className="font-bold text-sm">#ReactJS</span>
+                    <span className="text-[#536471] text-xs">30k post</span>
+                </div>
+
+                {/* The War3 */}
+                <div className="flex flex-col py-3  space-y-0.5">
+                    <div className="flex justify-between text-[#536471] text-[13px]">
+                        <span>Trending in Global</span>
+                        <EllipsisHorizontalIcon className="w-[20px]" />
+                    </div>
+                    <span className="font-bold text-sm">#TheWar3</span>
+                    <span className="text-[#536471] text-xs">29k posts</span>
+                </div>
+
+                {/* Donal Trump Trending */}
+                <div className="flex flex-col py-3  space-y-0.5">
+                    <div className="flex justify-between text-[#536471] text-[13px]">
+                        <span>Trending in US</span>
+                        <EllipsisHorizontalIcon className="w-[20px]" />
+                    </div>
+                    <span className="font-bold text-sm">#DonalTrump</span>
+                    <span className="text-[#536471] text-xs">10k posts</span>
+                </div>
+            </div>
+
+            {/* 3. Who to Follow */}
+            <div className="bg-[#F7F9F9] rounded-2xl p-3">
+                <h1 className="text-xl font-bold mb-2">Who to Follow</h1>
+                {/* Profile to follow 1 */}
+                <div className="flex justify-between items-center py-3">
+                    <div className="flex item-center space-x-3">
+                        <Image
+                            src="/assets/avatar_02.jpg"
+                            width={56} height={56}
+                            alt="profile picture"
+                            className="w-14 h-14 rounded-full"
+                        />
+                        <div className="flex flex-col text-sm">
+                            <span className="font-bold">Logan</span>
+                            <span>@logan0909</span>
+                        </div>
+                    </div>
+
+                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
+                        Follow
+                    </button>
+                </div>
+
+                {/* Profile to follow 2 */}
+                <div className="flex justify-between items-center py-3">
+                    <div className="flex item-center space-x-3">
+                        <Image
+                            src="/assets/avatar_04.jpg"
+                            width={56} height={56}
+                            alt="profile picture"
+                            className="w-14 h-14 rounded-full"
+                        />
+                        <div className="flex flex-col text-sm">
+                            <span className="font-bold">Athony Smith</span>
+                            <span>@anthony0606</span>
+                        </div>
+                    </div>
+
+                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
+                        Follow
+                    </button>
+                </div>
+
+                {/* Profile to follow 3 */}
+                <div className="flex justify-between items-center py-3">
+                    <div className="flex item-center space-x-3">
+                        <Image
+                            src="/assets/avatar_12.jpg"
+                            width={56} height={56}
+                            alt="profile picture"
+                            className="w-14 h-14 rounded-full"
+                        />
+                        <div className="flex flex-col text-sm">
+                            <span className="font-bold">Alexis Wan</span>
+                            <span>@alexis_wan00102</span>
+                        </div>
+                    </div>
+
+                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
+                        Follow
+                    </button>
+                </div>
+
+                {/* Profile to follow 4 */}
+                {/* <div className="flex justify-between items-center py-3">
+                    <div className="flex item-center space-x-3">
+                        <Image
+                            src="/assets/avatar_13.jpg"
+                            width={56} height={56}
+                            alt="profile picture"
+                            className="w-14 h-14 rounded-full"
+                        />
+                        <div className="flex flex-col text-sm">
+                            <span className="font-bold">Angela Baby</span>
+                            <span>@angelababy</span>
+                        </div>
+                    </div>
+
+                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
+                        Follow
+                    </button>
+                </div> */}
+            </div>
+
+            {/* 4. Footer links (Tùy chọn cho giống Twitter) */}
+            <div className="text-[#536471] text-[13px] px-4 space-x-2">
+                <span>Terms of Service</span>
+                <span>Privacy Policy</span>
+                <span>© 2026 Netzine</span>
+            </div>
+        </div>
+    )
+}
