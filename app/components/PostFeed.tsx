@@ -57,8 +57,6 @@ export default function PostFeed() {
     }
 
 
-    console.log(posts)
-
     return (
         <div className="flex-grow max-w-2xl border-x border-gray-100 min-h-screen">
             <div className="py-4 px-3 text-lg sm:text-xl sticky top-0 z-50

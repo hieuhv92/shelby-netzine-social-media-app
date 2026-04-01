@@ -10,39 +10,56 @@ import { XChainWalletSelector } from '@shelby-protocol/ui/components/x-chain-wal
 
 export default function SidebarUserInfo() {
     const dispatch: AppDispatch = useDispatch();
-    const user = useSelector((state: RootState) => state.user)
+    const user = useSelector((state: RootState) => state.user);
+    const { account, wallet } = useWallet();
     async function handleSignOut() {
         // await signOut();
-        dispatch(signOutUser())
+        dispatch(signOutUser());
     }
 
-    const { account, wallet } = useWallet();
+    console.log("user: ", user)
 
     return (
         <div className="absolute bottom-3 flex items-center
-            space-x-2 xl:p-3 xl:pe-6 hover:bg-gray-200 hover:bg-opacity-10
-            rounded-full transition cursor-pointer"
+        space-x-3 xl:p-3 xl:pe-6 hover:bg-gray-100 
+        rounded-full transition duration-200 cursor-pointer w-full max-w-fit xl:max-w-[260px]"
             onClick={() => handleSignOut()}
         >
-            {account ? <Image
-                src="/assets/avatar_07.jpg"
-                width={36} height={36}
-                alt="Profile Picture"
-                className="w-9 h-9"
-            /> : ''}
+            {account && (
+                <div className="relative">
+                    {/* User Avatar */}
+                    <Image
+                        src="/assets/avatar.jpg"
+                        width={40}
+                        height={40}
+                        alt="Profile Picture"
+                        className="w-10 h-10 rounded-full object-cover border border-gray-100"
+                    />
+
+                    {/* Online Status Dot */}
+                    <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-white animate-pulse"></span>
+                </div>
+            )}
+
             <div className="hidden xl:flex flex-col text-sm">
-                <span className="font-bold">{user?.name}</span>
-                <span className="text-gray-500">{user?.username}</span>
-                <XChainWalletSelector
-                    size="sm"
-                    className={clsx(
-                        'w-full brand-gradient shadow-sm',
-                        // sidebar is always expanded → keep alignment stable to avoid layout "jump" on hover
-                        'justify-start',
-                        'overflow-hidden text-ellipsis whitespace-nowrap',
-                    )
-                    }
-                />
+                {/* <span className="font-bold text-[#0F1419] truncate">
+                    {user?.username || "Anonymous User"}
+                </span> */}
+                {/* <span className="text-gray-500 truncate">
+                    @{user?.display_name || "unknown"}
+                </span> */}
+
+                {/* Wallet Selector with small margin top */}
+                <div className="mt-1">
+                    <XChainWalletSelector
+                        size="sm"
+                        className={clsx(
+                            'w-full brand-gradient shadow-sm',
+                            'justify-start',
+                            'overflow-hidden text-ellipsis whitespace-nowrap text-[12px]',
+                        )}
+                    />
+                </div>
             </div>
         </div>
     )

@@ -161,11 +161,12 @@ export default function PostInput({ insideModal }: PostInputProps) {
         <div className="flex space-x-5 p-3 border-b border-gray-100">
             <div>
                 <Image
-                    src={insideModal ? "/assets/avatar_07.jpg" : "/assets/avatar_07.jpg"}
+                    src={insideModal ? "/assets/avatar.jpg" : "/assets/avatar.jpg"}
                     width={44} height={44}
                     alt="profile input"
                     className="w-11 h-11 rounded-full z-10 bg-white" />
             </div>
+
             <div className="w-full">
                 {/* Hidden file input */}
                 <input
@@ -181,6 +182,7 @@ export default function PostInput({ insideModal }: PostInputProps) {
                     onChange={(event) => setCaption(event.target.value)}
                     value={caption}
                 />
+
                 {/* Media Preview Area */}
                 {mediaPreviewUrl && (
                     <div className="relative mt-3 mb-2">
@@ -208,6 +210,7 @@ export default function PostInput({ insideModal }: PostInputProps) {
                         </div>
                     </div>
                 )}
+
                 <div className="flex justify-between pt-5 border-t border-gray-100 pb-3">
                     <div className="flex space-x-1.5">
                         <PhotoIcon className="w-[22px] h-[22px] text-[#F4AF01]" onClick={handleIconClick} />
@@ -225,6 +228,7 @@ export default function PostInput({ insideModal }: PostInputProps) {
                         POST
                     </button>
                 </div>
+
                 {/* Upload Progress */}
                 {isUploading && (
                     <div className="w-full  bg-white rounded-lg shadow-md overflow-hidden">
@@ -243,11 +247,10 @@ export default function PostInput({ insideModal }: PostInputProps) {
                                     style={{ width: `${uploadProgress}%` }}
                                 ></div>
                             </div>
-
                         </div>
                     </div>
-
                 )}
+
             </div>
         </div >
     )

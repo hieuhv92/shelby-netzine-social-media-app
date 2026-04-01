@@ -67,6 +67,7 @@ export default function PostCard({ post, id }: PostProps) {
 
 interface PostHeaderProps {
     username: string,
+    displayName?: string,
     caption: string,
     timestamp?: string,
     replyTo?: string,
