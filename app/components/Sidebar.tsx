@@ -36,7 +36,11 @@ export default function Sidebar() {
         <nav className="h-screen flex flex-col fixed top-0 p-3 xl:ml-24 w-max z-50">
             <div className="relative h-full flex flex-col">
                 <div className="py-3">
-                    <Logo className="w-10 h-10" />
+                    <Link href="/">
+                        <div className="p-2.5 rounded-full hover:bg-gray-200 hover:bg-opacity-30 transition duration-200 ease-out cursor-pointer group w-fit">
+                            <Logo className="w-10 h-10 group-hover:scale-110 transition-transform duration-200" />
+                        </div>
+                    </Link>
                 </div>
 
                 <ul className="flex-grow relative">

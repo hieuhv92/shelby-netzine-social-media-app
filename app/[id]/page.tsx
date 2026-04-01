@@ -17,31 +17,6 @@ interface PostDetailProps {
     id: string
 }
 
-// const fetchPost = async (id: string) => {
-//     const [post, setPost] = useState<Post | null>(null);
-//     const [comments, setComments] = useState<CommentType[]>([]);
-//     const [newComment, setNewComment] = useState('');
-//     const [isLiked, setIsLiked] = useState(false);
-//     const [likesCount, setLikesCount] = useState(0);
-//     const [loading, setLoading] = useState(true);
-//     const [submittingComment, setSubmittingComment] = useState(false);
-//     const router = useRouter();
-//     try {
-//         const response = await fetch(`/api/posts/${id}`)
-//         if (!response.ok) {
-//             throw new Error('Failed to fetch post')
-//         }
-//         const data = await response.json()
-//         setPost(data.post)
-//         setIsLiked(data.post.is_liked || false)
-//         setLikesCount(data.post.likes_count || 0)
-//     } catch (error) {
-//         console.error('Error fetching post:', error)
-//     } finally {
-//         setLoading(false)
-//     }
-// }
-
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
     const postId = resolvedParams.id;
@@ -130,7 +105,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                                 <div className="flex justify-between items-center mb-1.5">
                                     <div className="flex space-x-3">
                                         <Image
-                                            src={"/assets/avatar_01.jpg"}
+                                            src={"/assets/avatar.jpg"}
                                             width={44}
                                             height={44}
                                             alt="User Avatar"
