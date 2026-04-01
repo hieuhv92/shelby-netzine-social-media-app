@@ -1,35 +1,35 @@
-# Netzin Social Media App - Một không gian mở cho tất cả mọi người.
+# Netzin Social Media App - An open space for everyone.
 
-Ứng dụng Netzin được xây dựng với Next.js, Supabase, và Shelby.
+The Netzin application is built using Next.js, Supabase, and Shelby
 
-## Công nghệ sử dụng
+## Tech Stack
 
-- **Next.js 16**: Framework React với App Router
-- **Supabase**: Database và metadata storage
-- **Shelby**: Wallet authentication và file storage (ảnh/video)
+- **Next.js 16**: React framework with App Router support.
+- **Supabase**: Database and metadata storage
+- **Shelby**: Wallet authentication and file storage (image/video)
 - **TypeScript**: Type safety
 - **Tailwind CSS**: Styling
 
-## Tính năng
+## Features
 
-- ✅ Wallet authentication với Aptos wallet (Shelby)
-- ✅ Upload ảnh/video lên Shelby storage
-- ✅ Lưu metadata vào Supabase
-- ✅ Feed page hiển thị posts
-- ✅ Post detail với comments
-- ✅ User profile
-- ✅ Like/Unlike posts
-- ✅ Comment on posts
-- ✅ Follow/Unfollow users
-- ✅ Responsive design
+- ✅ Wallet authentication: Seamless login via Aptos wallet (Shelby).
+- ✅ Media Storage: Upload images/videos directly to Shelby storage.
+- ✅ Metadata Management: Synchronize post data with Supabase.
+- ✅ Dynamic Feed: Real-time display of community posts
+- ✅ Interactive Posts: Detailed view with a dedicated comment system.
+- ✅ User Profiles: Personalized spaces for every creator.
+- ✅ Social Actions: Like/Unlike, Commenting, and Follow/Unfollow logic.
+- ✅ Responsive Design: Fully optimized for Mobile, Tablet, and Desktop.
+- ✅ test
+- ✅ test
 
-## Cấu trúc dự án
+## Project Structure
 
 ```
-open-hub/
-├── app/                    # Next.js App Router
-│   ├── (auth)/            # Auth routes
-│   │   └── login/         # Login page
+Netzin/
+├── app/                   # Next.js App Router
+│   ├── [id]/              # Auth routes
+│   │   └── page.tsx/      # Post Detail page
 │   ├── (main)/            # Main app routes
 │   │   ├── page.tsx       # Feed page
 │   │   ├── post/[id]/     # Post detail
@@ -40,7 +40,7 @@ open-hub/
 │       ├── upload/        # Upload to Shelby
 │       ├── posts/         # Posts CRUD
 │       └── users/         # User management
-├── components/             # React components
+├── components/            # React components
 │   ├── auth/              # Auth components
 │   ├── post/              # Post components
 │   ├── profile/           # Profile components
@@ -58,50 +58,51 @@ open-hub/
 
 ## Setup
 
-### 1. Cài đặt dependencies
+### 1. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Cấu hình environment variables
+### 2. Configure Environment Variables
 
-Tạo file `.env.local`:
+Create a `.env.local` in the root directory
 
 ```env
-# Supabase
+# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
-# Shelby
+# Shelby Configuration
 SHELBY_API_URL=https://api.shelby.xyz
 SHELBY_API_KEY=your_shelby_api_key
 SHELBY_NETWORK=testnet
 
-# Next.js
+# Next.js Application Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3030
 ```
 
-### 3. Setup Supabase
+### 3. Database Setup(Supabase)
 
-1. Tạo project trên [Supabase](https://supabase.com)
-2. Chạy migration:
+1. Create a new project on [Supabase](https://supabase.com)
+2. Apply the database migrations:
 
 ```bash
-# Sử dụng Supabase CLI hoặc chạy SQL trong Supabase Dashboard
+# Using Supabase CLI
 supabase db push
 ```
 
-Hoặc copy nội dung từ `supabase/migrations/001_initial_schema.sql` và chạy trong SQL Editor của Supabase.
+Alternatively, copy the content from `supabase/migrations/01_initialize_shelby_schema.sql` into the Supabase SQL Editor.
 
-### 4. Chạy development server
+
+### 4. Running development server
 
 ```bash
 npm run dev
 ```
 
-Mở [http://localhost:3030](http://localhost:3030) trong browser.
+Visit [http://localhost:3030](http://localhost:3030) to view the app.
 
 ## Database Schema
 
@@ -137,7 +138,7 @@ Mở [http://localhost:3030](http://localhost:3030) trong browser.
 - `follower_id`: UUID (foreign key to users)
 - `following_id`: UUID (foreign key to users)
 
-## API Routes
+## API Documentation
 
 ### Authentication
 - `POST /api/auth/login` - Login với wallet address
@@ -162,11 +163,11 @@ Mở [http://localhost:3030](http://localhost:3030) trong browser.
 ### Upload
 - `POST /api/upload` - Upload file metadata to Supabase (after Shelby upload)
 
-## Lưu ý
+## Important Notes
 
-- Cần cài đặt [Petra Wallet](https://petra.app/) extension để kết nối wallet
-- Shelby API endpoints có thể cần điều chỉnh dựa trên documentation thực tế tại docs.shelby.xyz
-- Đảm bảo Supabase project đã được setup và migrations đã chạy
+- Wallet Required: Users must install the Petra Wallet extension [Petra Wallet](https://petra.app/) to interact with the app.
+- Shelby Integration: API endpoints are subject to change; please refer to the official Shelby Documentation for the latest updates.
+- Production: Ensure all Supabase RLS (Row Level Security) policies are correctly configured before deployment.
 
 ## Development
 
@@ -186,4 +187,4 @@ npm run lint
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
