@@ -31,7 +31,11 @@ export default function PostFeed() {
         }
 
         fetchPosts();
-    }, [])
+    }, []);
+
+    const addNewPostToFeed = (newPost) => {
+        setPosts((posts) => [newPost, ...posts]);
+    };
 
     if (isLoading) {
         return (
@@ -64,7 +68,7 @@ export default function PostFeed() {
             >
                 Home
             </div>
-            <PostInput />
+            <PostInput onSuccess={addNewPostToFeed} />
 
             {isLoading ? (
                 <div className="p-10 text-center animate-pulse">Loading...</div>

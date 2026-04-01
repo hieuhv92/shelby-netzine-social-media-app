@@ -22,7 +22,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     const postId = resolvedParams.id;
 
     const [post, setPost] = useState<Post | null>(null)
-    const [comments, setComments] = useState<Comment[]>([])
+    const [comments, setComments] = useState<CommentType[]>([])
     const [newComment, setNewComment] = useState('')
     const [isLiked, setIsLiked] = useState(false)
     const [likesCount, setLikesCount] = useState(0)
@@ -113,10 +113,11 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                                         />
                                         <div className="flex flex-col text-[15px]">
                                             <span className="font-bold">{post?.user?.username}</span>
-                                            <span className="text-[#707E89]">@{post?.user?.display_name}</span>
+                                            {post?.user?.display_name &&
+                                                <span className="text-[#707E89]">@{post.user.display_name}</span>
+                                            }
                                         </div>
                                     </div>
-                                    <EllipsisHorizontalCircleIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
                                 </div>
 
                                 <span className="text-[15px]">{post?.caption}</span>
@@ -152,9 +153,14 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
                             </div>
 
                             {/* Comments List */}
-                            {/* {post?.comments?.map((comment) => (
-                                <Comment key={comment.id} comment={comment} />
-                            ))} */}
+                            {comments?.map((comment) => (
+                                <Comment
+                                    username={comment?.user?.username}
+                                    displayName={comment?.user?.display_name}
+                                    content={comment?.content}
+                                    timestamp={comment?.created_at}
+                                />
+                            ))}
                         </>
                     )}
                 </div>
@@ -169,13 +175,22 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
     );
 }
 
-function Comment() {
+interface CommentProps {
+    displayName: string,
+    username: string,
+    content: string,
+    timestamp: string
+}
+
+function Comment({ username, displayName, content, timestamp }: CommentProps) {
     return (
-        <div className="border-b border-gary-100">
+        <div className="border-b border-gray-100">
             <PostHeader
-                username="alex123"
-                displayName="Alex"
-                caption="Hello World!"
+                username={username}
+                displayName={displayName}
+                caption={content}
+                timestamp={timestamp}
+                isPostDetail={true}
             />
             <div className="flex space-x-14 p-3 ms-16">
                 <ChatBubbleLeftEllipsisIcon className="w-[22px] h-[22px] cursor-not-allowed" />

@@ -10,6 +10,10 @@ export function formatDate(date: string | Date): string {
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000)
 
+  if (diffInSeconds == 0) {
+    return "Just now"
+  }
+
   if (diffInSeconds < 60) {
     return `${diffInSeconds}s ago`
   }

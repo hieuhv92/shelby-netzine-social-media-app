@@ -20,7 +20,7 @@ export default function PostCard({ post, id }: PostProps) {
         <div className="border-b border-gray-100">
             <Link href={'/' + id}>
                 <PostHeader
-                    username={user?.username}
+                    username={post.user?.username}
                     caption={post?.caption}
                     timestamp={post?.created_at}
                     fileType={post?.file_type}
@@ -76,10 +76,11 @@ interface PostHeaderProps {
     fileType?: string,
     shelbyFileUrl?: string,
     detailAspectRatio?: number,
-    insideModal?: boolean
+    insideModal?: boolean,
+    isPostDetail?: boolean
 }
 
-export function PostHeader({ username, caption, timestamp, replyTo, fileType, shelbyFileUrl, insideModal }: PostHeaderProps) {
+export function PostHeader({ username, caption, timestamp, replyTo, fileType, shelbyFileUrl, insideModal, isPostDetail }: PostHeaderProps) {
     return (
         <div className="flex p-3 space-x-5">
             <Image
@@ -113,37 +114,46 @@ export function PostHeader({ username, caption, timestamp, replyTo, fileType, sh
                     }
                 </div >
                 <span>{caption}</span>
-                {!insideModal ? (<div className="max-w-md mx-auto">
-                    {fileType === 'image' ? (
-                        <img
-                            src={shelbyFileUrl}
-                            alt={caption || 'Post image'}
-                            className="w-full max-h-[512px] object-cover rounded-2xl"
-                            loading="lazy"
-                            decoding="async"
-                            onError={(e) => {
-                                e.currentTarget.src = '/placeholder-image.svg'
-                            }}
-                        />
-                    ) : (
-                        <video
-                            src={shelbyFileUrl}
-                            controls
-                            className="h-full w-full object-cover"
-                            preload="metadata"
-                        />
-                    )}
-                </div>) : (
-                    <div className="mt-2 overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
-                        <a
-                            href="#"
-                            title={shelbyFileUrl}
-                            className="text-[#8247E5] opacity-80 text-[14px] hover:underline pointer-events-none cursor-default"
-                            aria-disabled="true"
-                        >
-                            {shelbyFileUrl?.replace("https://", "").slice(0, 30)}...
-                        </a>
-                    </div>
+
+                {!isPostDetail && (
+                    <>
+                        {!insideModal ? (
+                            <div className="max-w-md mx-auto w-full">
+                                {fileType === 'image' ? (
+                                    <img
+                                        src={shelbyFileUrl}
+                                        alt={caption || 'Post image'}
+                                        className="w-full max-h-[512px] object-cover rounded-2xl border border-gray-100"
+                                        loading="lazy"
+                                        decoding="async"
+                                        onError={(e) => {
+                                            e.currentTarget.src = '/placeholder-image.svg';
+                                        }}
+                                    />
+                                ) : (
+                                    <video
+                                        src={shelbyFileUrl}
+                                        controls
+                                        muted
+                                        playsInline
+                                        className="w-full max-h-[512px] object-cover rounded-2xl border border-gray-100"
+                                        preload="metadata"
+                                    />
+                                )}
+                            </div>
+                        ) : (
+                            <div className="mt-2 overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+                                <a
+                                    href="#"
+                                    title={shelbyFileUrl}
+                                    className="text-[#8247E5] text-[14px] font-medium hover:underline pointer-events-none cursor-default opacity-90"
+                                    aria-disabled="true"
+                                >
+                                    {shelbyFileUrl?.replace("https://", "").slice(0, 30)}...
+                                </a>
+                            </div>
+                        )}
+                    </>
                 )}
 
                 {replyTo &&

@@ -11,13 +11,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { closeCommentModal } from "../redux/slices/modalSlice";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface PostInputProps {
     insideModal?: boolean,
-    postId?: string
+    postId?: string,
+    onSuccess?: (newPost: any) => void;
 }
 
-export default function PostInput({ insideModal, postId }: PostInputProps) {
+export default function PostInput({ insideModal, postId, onSuccess }: PostInputProps) {
     const { account, wallet } = useWallet();
     const { uploadFileToRcp } = useUploadFile();
     const { submitFileToChain } = useSubmitFileToChain();
@@ -136,6 +138,16 @@ export default function PostInput({ insideModal, postId }: PostInputProps) {
                 router.refresh(); // Refresh Server Components data
             }
 
+            toast.success("Post sent successfully!", {
+                style: { background: '#F4AF01', color: '#fff' }
+            });
+
+            // Callback to update UI immediately
+            if (onSuccess) {
+                const data = await saveResponse.json();
+                onSuccess(data.post);
+            }
+
         } catch (error) {
             console.error('Post error:', error);
             alert("Something went wrong, please try again!");
@@ -145,19 +157,6 @@ export default function PostInput({ insideModal, postId }: PostInputProps) {
             setUploadStage('');
         }
     };
-
-    // const sendComment = async () => {
-    // const body = {
-    //     name: user.displayName,
-    //     userName: user.userName,
-    //     text: text
-    // }
-    // await updatePost
-
-    // After send conmment successfully
-    // setCaption("");
-    // dispatch(closeCommentModal())
-    // }
 
     const sendComment = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -178,6 +177,10 @@ export default function PostInput({ insideModal, postId }: PostInputProps) {
                 const data = await response.json();
                 // setComments((prev) => [...prev, data.comment]);
                 setNewComment("");
+                toast.success("Comment sent successfully!", {
+                    style: { background: '#F4AF01', color: '#fff' }
+                });
+                dispatch(closeCommentModal());
             }
         } catch (error) {
             console.error("Error submitting comment:", error);
@@ -241,13 +244,16 @@ export default function PostInput({ insideModal, postId }: PostInputProps) {
                 )}
 
                 <div className="flex justify-between pt-5 border-t border-gray-100 pb-3">
-                    <div className="flex space-x-1.5">
-                        <PhotoIcon className="w-[22px] h-[22px] text-[#F4AF01]" onClick={handleIconClick} />
-                        <ChartBarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-                        <FaceSmileIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-                        <CalendarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-                        <MapPinIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-                    </div>
+                    {!insideModal && (
+                        <div className="flex space-x-1.5">
+                            <PhotoIcon className="w-[22px] h-[22px] text-[#F4AF01]" onClick={handleIconClick} />
+                            <ChartBarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
+                            <FaceSmileIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
+                            <CalendarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
+                            <MapPinIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
+                        </div>
+                    )}
+
                     <button
                         onClick={(event) => insideModal ? sendComment(event) : sendPost()}
                         disabled={insideModal ? !newComment : !caption}
