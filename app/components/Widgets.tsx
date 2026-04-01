@@ -26,7 +26,7 @@ export default function Widgets() {
                         <span>Trending in Global</span>
                         <EllipsisHorizontalIcon className="w-[20px]" />
                     </div>
-                    <span className="font-bold text-sm">#TheWar3</span>
+                    <span className="font-bold text-sm">#TheWorldCup2026</span>
                     <span className="text-[#536471] text-xs">30k posts</span>
                 </div>
 
@@ -76,7 +76,7 @@ export default function Widgets() {
                 </div>
 
                 {/* Profile to follow 2 */}
-                {/* <div className="flex justify-between items-center py-3">
+                <div className="flex justify-between items-center py-3">
                     <div className="flex item-center space-x-3">
                         <Image
                             src="/assets/avatar_13.jpg"
@@ -85,15 +85,15 @@ export default function Widgets() {
                             className="w-14 h-14 rounded-full"
                         />
                         <div className="flex flex-col text-sm">
-                            <span className="font-bold">Athony Smith</span>
-                            <span>@anthony0606</span>
+                            <span className="font-bold">Lily Rose</span>
+                            <span>@lilyrose1012</span>
                         </div>
                     </div>
 
                     <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
                         Follow
                     </button>
-                </div> */}
+                </div>
 
                 {/* Profile to follow 3 */}
                 <div className="flex justify-between items-center py-3">
@@ -107,26 +107,6 @@ export default function Widgets() {
                         <div className="flex flex-col text-sm">
                             <span className="font-bold">Edward Brown</span>
                             <span>@edward0809</span>
-                        </div>
-                    </div>
-
-                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
-                        Follow
-                    </button>
-                </div>
-
-                {/* Profile to follow 4 */}
-                <div className="flex justify-between items-center py-3">
-                    <div className="flex item-center space-x-3">
-                        <Image
-                            src="/assets/avatar_13.jpg"
-                            width={56} height={56}
-                            alt="profile picture"
-                            className="w-14 h-14 rounded-full"
-                        />
-                        <div className="flex flex-col text-sm">
-                            <span className="font-bold">Lily Rose</span>
-                            <span>@lilyrose1012</span>
                         </div>
                     </div>
 
