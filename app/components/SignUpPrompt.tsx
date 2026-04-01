@@ -16,7 +16,6 @@ export default function SignUpPrompt() {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const router = useRouter();
     const name = useSelector((state: RootState) => state.user.name);
-    console.log(name);
 
     useEffect(() => {
         const handleLogin = async () => {

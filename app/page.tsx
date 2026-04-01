@@ -25,7 +25,7 @@ export default function Home() {
 
       </main>
       {/* <SignUpPrompt /> */}
-      {/* <CommentModal /> */}
+      <CommentModal />
     </div>
   );
 }

@@ -13,10 +13,11 @@ import { closeCommentModal } from "../redux/slices/modalSlice";
 import { useRouter } from "next/navigation";
 
 interface PostInputProps {
-    insideModal?: boolean
+    insideModal?: boolean,
+    postId?: string
 }
 
-export default function PostInput({ insideModal }: PostInputProps) {
+export default function PostInput({ insideModal, postId }: PostInputProps) {
     const { account, wallet } = useWallet();
     const { uploadFileToRcp } = useUploadFile();
     const { submitFileToChain } = useSubmitFileToChain();
@@ -30,6 +31,7 @@ export default function PostInput({ insideModal }: PostInputProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const commentDetails = useSelector((state: RootState) => state.modals.commentPostDetails);
+    const [newComment, setNewComment] = useState("");
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -144,18 +146,45 @@ export default function PostInput({ insideModal }: PostInputProps) {
         }
     };
 
-    const sendComment = async () => {
-        // const body = {
-        //     name: user.displayName,
-        //     userName: user.userName,
-        //     text: text
-        // }
-        // await updatePost
+    // const sendComment = async () => {
+    // const body = {
+    //     name: user.displayName,
+    //     userName: user.userName,
+    //     text: text
+    // }
+    // await updatePost
 
-        // After send conmment successfully
-        setCaption("");
-        dispatch(closeCommentModal())
-    }
+    // After send conmment successfully
+    // setCaption("");
+    // dispatch(closeCommentModal())
+    // }
+
+    const sendComment = async (e: React.FormEvent) => {
+        e.preventDefault();
+        // if (!newComment.trim() || submittingComment) return;
+        if (!newComment.trim()) return;
+
+        // setSubmittingComment(true);
+        try {
+            const response = await fetch(`/api/posts/${postId}/comments`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ content: newComment }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // setComments((prev) => [...prev, data.comment]);
+                setNewComment("");
+            }
+        } catch (error) {
+            console.error("Error submitting comment:", error);
+        } finally {
+            // setSubmittingComment(false);
+        }
+    };
 
     return (
         <div className="flex space-x-5 p-3 border-b border-gray-100">
@@ -179,8 +208,8 @@ export default function PostInput({ insideModal }: PostInputProps) {
                 <textarea
                     className="resize-none outline-none w-full min-h-[50px] text-lg"
                     placeholder={insideModal ? "Send your reply" : "What's happening?"}
-                    onChange={(event) => setCaption(event.target.value)}
-                    value={caption}
+                    onChange={(event) => insideModal ? setNewComment(event.target.value) : setCaption(event.target.value)}
+                    value={insideModal ? newComment : caption}
                 />
 
                 {/* Media Preview Area */}
@@ -220,12 +249,12 @@ export default function PostInput({ insideModal }: PostInputProps) {
                         <MapPinIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
                     </div>
                     <button
-                        onClick={() => insideModal ? sendComment() : sendPost()}
-                        disabled={!caption}
+                        onClick={(event) => insideModal ? sendComment(event) : sendPost()}
+                        disabled={insideModal ? !newComment : !caption}
                         className=" bg-[#F4AF01] text-white w-[80px] h-[36px] 
                         rounded-full text-sm disabled:opacity-60 transition-all font-medium tracking-wide"
                     >
-                        POST
+                        {insideModal ? "Reply" : "POST"}
                     </button>
                 </div>
 

@@ -17,8 +17,6 @@ export default function SidebarUserInfo() {
         dispatch(signOutUser());
     }
 
-    console.log("user: ", user)
-
     return (
         <div className="absolute bottom-3 flex items-center
         space-x-3 xl:p-3 xl:pe-6 hover:bg-gray-100 

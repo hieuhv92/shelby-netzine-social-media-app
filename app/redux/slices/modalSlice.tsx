@@ -5,10 +5,12 @@ const initialState = {
     logInModalOpen: false,
     commentModalOpen: false,
     commentPostDetails: {
-        name: "",
+        displayName: "",
         username: "",
-        id: "",
-        caption: ""
+        userId: "",
+        caption: "",
+        shelbyFileUrl: "",
+        postId: ""
     }
 }
 
@@ -35,10 +37,12 @@ const modalSlice = createSlice({
             state.commentModalOpen = false;
         },
         setCommentDetails: (state, action) => {
-            state.commentPostDetails.name = action.payload.name;
             state.commentPostDetails.username = action.payload.username;
-            state.commentPostDetails.id = action.payload.id;
+            state.commentPostDetails.displayName = action.payload.displayName;
+            state.commentPostDetails.userId = action.payload.userId;
             state.commentPostDetails.caption = action.payload.caption;
+            state.commentPostDetails.shelbyFileUrl = action.payload.shelbyFileUrl;
+            state.commentPostDetails.postId = action.payload.postId;
         }
     }
 });

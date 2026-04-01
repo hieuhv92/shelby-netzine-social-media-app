@@ -21,7 +21,6 @@ export default function SignUpModal() {
     const dispatch: AppDispatch = useDispatch();
 
     async function handleSignUp() {
-        console.log(email + ': ' + password);
 
         // dispatch(signInUser({
         //     name: "Hieu Ho"

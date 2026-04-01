@@ -34,16 +34,18 @@ export default function PostCard({ post, id }: PostProps) {
                     hover:text-[#F4AF01] transition"
                         onClick={() => {
                             dispatch(setCommentDetails({
-                                name: user?.display_name,
+                                displayName: user?.display_name,
                                 username: user?.username,
-                                id: post.user_id,
-                                caption: post.caption
+                                userId: post.user_id,
+                                caption: post.caption,
+                                shelbyFileUrl: post.shelby_file_url,
+                                postId: post.id
                             }))
                             dispatch(openCommentModal())
                         }}
                     />
                     <span className="absolute text-xs top-1 -right-3">
-                        2
+                        {post?.comments_count}
                     </span>
                 </div>
                 <div className="relative">
@@ -51,7 +53,7 @@ export default function PostCard({ post, id }: PostProps) {
                     hover:text-[#F4AF01] transition"
                     />
                     <span className="absolute text-xs top-1 -right-3">
-                        2
+                        {post?.likes_count}
                     </span>
                 </div>
                 <div className="relative">
@@ -73,10 +75,11 @@ interface PostHeaderProps {
     replyTo?: string,
     fileType?: string,
     shelbyFileUrl?: string,
-    detailAspectRatio?: number
+    detailAspectRatio?: number,
+    insideModal?: boolean
 }
 
-export function PostHeader({ username, caption, timestamp, replyTo, fileType, shelbyFileUrl }: PostHeaderProps) {
+export function PostHeader({ username, caption, timestamp, replyTo, fileType, shelbyFileUrl, insideModal }: PostHeaderProps) {
     return (
         <div className="flex p-3 space-x-5">
             <Image
@@ -110,7 +113,7 @@ export function PostHeader({ username, caption, timestamp, replyTo, fileType, sh
                     }
                 </div >
                 <span>{caption}</span>
-                <div className="max-w-md mx-auto">
+                {!insideModal ? (<div className="max-w-md mx-auto">
                     {fileType === 'image' ? (
                         <img
                             src={shelbyFileUrl}
@@ -130,16 +133,25 @@ export function PostHeader({ username, caption, timestamp, replyTo, fileType, sh
                             preload="metadata"
                         />
                     )}
-                </div>
+                </div>) : (
+                    <div className="mt-2 overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+                        <a
+                            href="#"
+                            title={shelbyFileUrl}
+                            className="text-[#8247E5] opacity-80 text-[14px] hover:underline pointer-events-none cursor-default"
+                            aria-disabled="true"
+                        >
+                            {shelbyFileUrl?.replace("https://", "").slice(0, 30)}...
+                        </a>
+                    </div>
+                )}
 
                 {replyTo &&
-
                     <span className="text-[15px] text-[#707E89]">
                         Replying to <span className="text-[#F4AF01]">@{replyTo}</span>
                     </span>
-
                 }
             </div>
-        </div>
+        </div >
     )
 }

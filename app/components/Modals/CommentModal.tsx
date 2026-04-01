@@ -13,9 +13,20 @@ export default function CommentModal() {
     const open = useSelector((state: RootState) => state.modals.commentModalOpen);
     const commentDetails = useSelector((state: RootState) => state.modals.commentPostDetails);
     const dispatch = useDispatch();
+    const postId = commentDetails.postId;
 
-
-
+    const fetchComments = async () => {
+        try {
+            const response = await fetch(`/api/posts/${postId}/comments`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch comments");
+            }
+            const data = await response.json();
+            setComments(data.comments || []);
+        } catch (error) {
+            console.error("Error fetching comments:", error);
+        }
+    };
     return (
         <>
             <Modal
@@ -35,10 +46,13 @@ export default function CommentModal() {
                             username={commentDetails.username}
                             caption={commentDetails.caption}
                             replyTo={commentDetails.username}
+                            shelbyFileUrl={commentDetails.shelbyFileUrl}
+                            insideModal={true}
                         />
                         <div className='mt-4'>
                             <PostInput
                                 insideModal={true}
+                                postId={commentDetails.postId}
                             />
                         </div>
                         <div className="absolute w-0.5 h-29 bg-gray-300 
