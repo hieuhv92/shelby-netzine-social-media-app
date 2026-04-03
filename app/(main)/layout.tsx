@@ -1,30 +1,31 @@
-import Sidebar from "./components/Sidebar";
-import PostFeed from "./components/PostFeed";
-import Widgets from "./components/Widgets";
-import SignUpPrompt from "./components/SignUpPrompt";
-import CommentModal from "./components/Modals/CommentModal";
+import Sidebar from "@/components/navigation/Sidebar";
+import Widgets from "@/components/navigation/Widgets";
+import CommentModal from "@/components/ui/modals/CommentModal";
 
-export default function Home() {
+export default function MainLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <div className="bg-white min-h-screen">
       <main className="max-w-[1300px] mx-auto flex">
         {/* Column 1: Sidebar */}
         <Sidebar />
 
-        {/* Column 2: PostFeed */}
+        {/* Column 2: Dynamic Content(Feed, Post Detail, Profile, v.v.) */}
         <div className="flex-grow border-l border-r border-gray-100 max-w-2xl w-full 
              ml-[80px] xl:ml-[370px]">
-
-          <PostFeed />
+          {children}
         </div>
 
         {/* Column 3: Widgets */}
         <div className="hidden lg:inline ml-8 flex-grow max-w-[350px]">
           <Widgets />
         </div>
-
       </main>
-      {/* <SignUpPrompt /> */}
+
+      {/* Common Modals */}
       <CommentModal />
     </div>
   );

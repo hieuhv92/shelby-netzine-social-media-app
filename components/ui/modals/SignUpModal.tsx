@@ -4,9 +4,10 @@ import { ArrowUpTrayIcon, ChartBarIcon, ChatBubbleOvalLeftEllipsisIcon, EyeIcon,
 import React, { useEffect, useState } from "react";
 import { Modal } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/redux/store";
-import { closeSignUpModal, openSignUpModal } from "@/app/redux/slices/modalSlice";
-import { signInUser } from "@/app/redux/slices/userSlice";
+import { AppDispatch, RootState } from "@/lib/redux/store";
+import { closeSignUpModal, openSignUpModal } from "@/lib/redux/slices/modalSlice";
+import { signInSuccess } from "@/lib/redux/slices/userSlice";
+// import { signInUser } from "@/lib/redux/slices/userSlice";
 
 export default function SignUpModal() {
     const [name, setName] = useState('');
@@ -35,7 +36,7 @@ export default function SignUpModal() {
             uid: 112233
         } //Get user information from database
 
-        dispatch(signInUser({
+        dispatch(signInSuccess({
             name: currentUser.displayName,
             username: currentUser.email.split("@")[0],
             email: currentUser.email,

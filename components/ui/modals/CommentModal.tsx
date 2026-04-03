@@ -3,10 +3,10 @@
 import { Modal } from '@mui/material'
 import React from 'react'
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/redux/store";
-import { openCommentModal, closeCommentModal } from "@/app/redux/slices/modalSlice";
-import { PostHeader } from '../Post';
-import PostInput from '../PostInput';
+import { AppDispatch, RootState } from "@/lib/redux/store";
+import { openCommentModal, closeCommentModal } from "@/lib/redux/slices/modalSlice";
+import PostHeader from "@/components/post/PostCard";
+import Composer from "@/components/feed/Composer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function CommentModal() {
@@ -22,7 +22,7 @@ export default function CommentModal() {
                 throw new Error("Failed to fetch comments");
             }
             const data = await response.json();
-            setComments(data.comments || []);
+            // setComments(data.comments || []);
         } catch (error) {
             console.error("Error fetching comments:", error);
         }
@@ -50,7 +50,7 @@ export default function CommentModal() {
                             insideModal={true}
                         />
                         <div className='mt-4'>
-                            <PostInput
+                            <Composer
                                 insideModal={true}
                                 postId={commentDetails.postId}
                             />

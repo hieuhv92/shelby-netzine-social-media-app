@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import SignUpModal from "./Modals/SignUpModal";
-import LogInModal from "./Modals/LogInModal";
+import SignUpModal from "@/components/ui/modals/SignUpModal";
+import LogInModal from "@/components/ui/modals/LogInModal";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "@/lib/redux/store";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from 'clsx';

@@ -1,4 +1,4 @@
-# Netzin Social Media App - An open space for everyone.
+# Netzin Social Media App - Networking meets the Art of the Magazine. A home for premium content.
 
 The Netzin application is built using Next.js, Supabase, and Shelby
 
@@ -9,51 +9,79 @@ The Netzin application is built using Next.js, Supabase, and Shelby
 - **Shelby**: Wallet authentication and file storage (image/video)
 - **TypeScript**: Type safety
 - **Tailwind CSS**: Styling
+- **Redux Toolkit**: Efficient global state management for user sessions and wallet states.
 
 ## Features
 
-- ✅ Wallet authentication: Seamless login via Aptos wallet (Shelby).
+- ✅ Responsive Design: Fully optimized for Mobile, Tablet, and Desktop.
 - ✅ Media Storage: Upload images/videos directly to Shelby storage.
-- ✅ Metadata Management: Synchronize post data with Supabase.
 - ✅ Dynamic Feed: Real-time display of community posts
+- ✅ Social Actions: Like/Unlike, Commenting, and Follow/Unfollow logic.
+- ✅ Metadata Management: Synchronize post data with Supabase.
 - ✅ Interactive Posts: Detailed view with a dedicated comment system.
 - ✅ User Profiles: Personalized spaces for every creator.
-- ✅ Social Actions: Like/Unlike, Commenting, and Follow/Unfollow logic.
-- ✅ Responsive Design: Fully optimized for Mobile, Tablet, and Desktop.
-- ✅ test
-- ✅ test
+- ✅ Wallet authentication: Seamless login via Aptos wallet (Shelby).
 
 ## Project Structure
 
 ```
 Netzin/
-├── app/                   # Next.js App Router
-│   ├── [id]/              # Auth routes
-│   │   └── page.tsx/      # Post Detail page
-│   ├── (main)/            # Main app routes
-│   │   ├── page.tsx       # Feed page
-│   │   ├── post/[id]/     # Post detail
-│   │   ├── profile/[id]/  # User profile
-│   │   └── create/        # Create post
-│   └── api/               # API routes
-│       ├── auth/          # Authentication
-│       ├── upload/        # Upload to Shelby
-│       ├── posts/         # Posts CRUD
-│       └── users/         # User management
-├── components/            # React components
-│   ├── auth/              # Auth components
-│   ├── post/              # Post components
-│   ├── profile/           # Profile components
-│   ├── upload/            # Upload components
-│   └── templates/         # Templates components
-├── lib/                   # Utilities
-│   ├── shelby.ts          # Shelby client
-│   ├── supabase.ts        # Supabase client
-│   ├── auth.ts            # Auth utilities
-│   └── utils.ts           # Helper functions
-├── types/                 # TypeScript types
-└── supabase/              # Database migrations
-    └── migrations/
+├── app/                        # Next.js App Router (Routing Layer)
+│   ├── layout.tsx              # Root Layout (HTML/Body, Redux, Wallet, Toast Providers)
+│   ├── globals.css             # Global Tailwind CSS styles
+│   ├── (auth)/                 # Authentication Route Group (Simple Layout)
+│   │   ├── layout.tsx          # Auth-specific Layout (e.g., Center card, no Sidebar)
+│   │   └── login/
+│   │       └── page.tsx        # Login Page
+│   ├── (main)/                 # Main App Route Group (Shared 3-Column Layout)
+│   │   ├── layout.tsx          # Main Shell (Sidebar, Content Middle, Widgets)
+│   │   ├── page.tsx            # Home Feed Page (Renders Composer + FeedList)
+│   │   ├── post/
+│   │   │   └── [id]/           # Post detail route
+│   │   │       └── page.tsx    # Single post view page
+│   │   └── profile/
+│   │       └── [id]/           # User profile route
+│   │           └── page.tsx    # User profile page
+│   └── api/                    # Backend API Routes (Serverless Functions)
+│       ├── auth/               # Auth handlers (Login, Logout, Session)
+│       ├── upload/             # Shelby Protocol file upload logic
+│       ├── posts/              # Posts CRUD (Create, Read, Update, Delete)
+│       └── users/              # User management & profile updates
+├── components/                 # React Components (UI Layer)
+│   ├── feed/                   # Feed-specific components
+│   │   ├── FeedList.tsx        # Infinite scroll or list of posts
+│   │   └── Composer.tsx        # The "Tweet-style" input box (with #F4AF01 icons)
+│   ├── post/                   # Post & Interaction components
+│   │   ├── PostCard.tsx        # Summary view for FeedList
+│   │   ├── PostDetail.tsx      # Extended view for [id] page
+│   │   └── CommentItem.tsx     # Individual comment row
+│   ├── navigation/             # Core navigation UI
+│   │   ├── Sidebar.tsx         # Fixed left-side menu
+│   │   └── Widgets.tsx         # Sticky right-side panel (Trends/Suggestions)
+│   ├── ui/                     # Generic/Atomic UI components
+│   │   ├── modals/             # App-wide modals
+│   │   │   └── CommentModal.tsx
+│   │   └── SignUpPrompt.tsx    # Bottom banner for guests
+│   └── providers/              # Context Providers
+│       ├── WalletProvider.tsx  # Blockchain/Wallet connection
+│       └── ToasterProvider.tsx # Notification system
+├── lib/                        # Infrastructure, Utilities & Logic
+│   ├── shelby.ts               # Shelby Protocol client setup
+│   ├── supabase.ts             # Supabase client (Server & Client)
+│   ├── auth.ts                 # Server-side auth utilities (JWT, Cookies)
+│   ├── session-client.ts       # Client-side session management (useSession)
+│   ├── redux/                  # Global State Management
+│   │   ├── store.ts            # Redux Store configuration
+│   │   ├── StoreProvider.tsx   # Redux Provider for Layout
+│   │   └── slices/             # Redux Slices (userSlice, postSlice)
+│   └── utils.ts                # Tailwind merge, date formatting, etc.
+├── types/                      # TypeScript Definitions
+│   ├── index.ts                # Shared Entity types (Post, User, Comment)
+│   └── api.ts                  # API Request/Response schemas
+├── public/                     # Static assets
+│   └── assets/                 # Avatars, Logos, Default images
+└── supabase/                   # Database configurations
+    └── migrations/             # Migration files for Schema versioning
 ```
 
 ## Setup

@@ -4,8 +4,8 @@ import { ArrowUpTrayIcon, ChartBarIcon, ChatBubbleOvalLeftEllipsisIcon, EyeIcon,
 import React, { useState } from "react";
 import { Modal } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/redux/store";
-import { closeLogInModal, openLoginModal } from "@/app/redux/slices/modalSlice";
+import { AppDispatch, RootState } from "@/lib/redux/store";
+import { closeLogInModal, openLoginModal } from "@/lib/redux/slices/modalSlice";
 
 export default function LogInModal() {
     const [showPassword, setShowPassword] = useState(false);

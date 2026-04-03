@@ -8,8 +8,8 @@ import { useSubmitFileToChain } from '@/hooks/useSubmitFileToChain';
 import { useUploadFile } from '@/hooks/useUploadFile';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { closeCommentModal } from "../redux/slices/modalSlice";
+import { RootState } from "@/lib/redux/store";
+import { closeCommentModal } from "@/lib/redux/slices/modalSlice";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 

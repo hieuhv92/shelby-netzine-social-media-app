@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import PostInput from "./PostInput";
-import POST from "./Post";
+import Composer from "@/components/feed/Composer";
+import PostCard from "@/components/post/PostCard";
 import { useEffect, useState } from 'react';
 import type { Post } from '@/types';
 
-export default function PostFeed() {
+export default function FeedList() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -68,7 +68,8 @@ export default function PostFeed() {
             >
                 Home
             </div>
-            <PostInput onSuccess={addNewPostToFeed} />
+
+            <Composer onSuccess={addNewPostToFeed} />
 
             {isLoading ? (
                 <div className="p-10 text-center animate-pulse">Loading...</div>
@@ -76,7 +77,7 @@ export default function PostFeed() {
                 (posts && posts.length > 0) ? (
                     posts.map((post) => (
                         <div key={post.id}>
-                            <POST post={post} id={post.id} />
+                            <PostCard post={post} id={post.id} />
                         </div>
                     ))
                 ) : (

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import StoreProvider from "./redux/StoreProvider";
-import { WalletProvider } from "./components/WalletProvider";
+import StoreProvider from "@/lib/redux/StoreProvider";
+import { WalletProvider } from "@/components/providers/WalletProvider";
 import { Toaster } from "@shelby-protocol/ui/components";
 
 const geistSans = Geist({
@@ -25,17 +25,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <StoreProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <StoreProvider>
           <WalletProvider>
             {children}
             <Toaster />
           </WalletProvider>
-        </body>
-      </html>
-    </StoreProvider>
+        </StoreProvider>
+      </body>
+    </html>
   );
 }

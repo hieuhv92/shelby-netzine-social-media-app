@@ -3,7 +3,7 @@ import { Timestamp } from "next/dist/server/lib/cache-handlers/types";
 import Image from "next/image";
 import { Post } from '@/types';
 import { formatDate } from '@/lib/utils';
-import { openCommentModal, setCommentDetails } from "../redux/slices/modalSlice";
+import { openCommentModal, setCommentDetails } from "@/lib/redux/slices/modalSlice";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 
@@ -18,7 +18,7 @@ export default function PostCard({ post, id }: PostProps) {
 
     return (
         <div className="border-b border-gray-100">
-            <Link href={'/' + id}>
+            <Link href={'/post/' + id}>
                 <PostHeader
                     username={post.user?.username}
                     caption={post?.caption}
