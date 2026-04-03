@@ -64,7 +64,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
             <div className="py-2 px-3 sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center">
                 <button
                     onClick={() => router.back()}
-                    className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition"
+                    className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer"
                 >
                     <ArrowLeftIcon className="w-5 h-5 text-[#0F1419]" />
                 </button>

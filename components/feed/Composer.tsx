@@ -150,7 +150,14 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
 
         } catch (error) {
             console.error('Post error:', error);
-            alert("Something went wrong, please try again!");
+            toast.error("Something went wrong, please try again!", {
+                style: {
+                    background: '#EF4444',
+                    color: '#fff',
+                    borderRadius: '8px',
+                },
+                duration: 4000,
+            });
         } finally {
             setIsUploading(false);
             setUploadProgress(0);

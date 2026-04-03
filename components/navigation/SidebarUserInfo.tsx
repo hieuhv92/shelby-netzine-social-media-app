@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-import { signOutUser, signInSuccess } from "@/lib/redux/slices/userSlice";
+import { signOutUser, signInSuccess, setLoading } from "@/lib/redux/slices/userSlice";
 import { AppDispatch, RootState } from "@/lib/redux/store";
 import clsx from 'clsx';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
@@ -19,16 +19,19 @@ export default function SidebarUserInfo() {
 
     useEffect(() => {
         const handleLogIn = async () => {
-            // CRITICAL CONDITIONS:
-            // 1. Wallet must be connected (account?.address exists)
-            // 2. Current wallet address must be DIFFERENT from the one in Redux (prevents infinite loops)
-            // 3. Not currently in the middle of an API call (isLoggingIn.current)
+            /**
+             * CRITICAL CONDITIONS FOR LOGIN:
+             * 1. Wallet must be connected (account?.address exists)
+             * 2. Current wallet address must be DIFFERENT from the one in Redux (prevents infinite loops)
+             * 3. Not currently in the middle of an API call (isLoggingIn.current)
+             */
             const currentWalletAddress = account?.address?.toString();
 
             if (connected && currentWalletAddress && currentWalletAddress !== user.address && !isLoggingIn.current) {
                 try {
                     isLoggingIn.current = true;
-                    console.log("🚀 Initiating Login API for:", currentWalletAddress);
+                    // Activate loading state in Redux
+                    dispatch(setLoading(true));
 
                     const response = await fetch('/api/auth/login', {
                         method: 'POST',
@@ -44,18 +47,24 @@ export default function SidebarUserInfo() {
                     // This aligns user.address with currentWalletAddress, preventing further calls
                     dispatch(signInSuccess({
                         address: currentWalletAddress,
-                        walletName: wallet?.adapter.name,
-                        // Add other user data from backend if necessary
+                        // walletName: wallet?.adapter.name,
+                        // Spread additional user data from backend if available
+                        // ...data 
                     }));
 
                 } catch (error) {
                     console.error('Login error:', error);
                 } finally {
                     isLoggingIn.current = false;
+                    // Deactivate loading state
+                    dispatch(setLoading(false));
                 }
             }
 
-            // Handle wallet disconnection: Clear Redux if wallet is disconnected but session remains
+            /**
+             * WALLET DISCONNECTION LOGIC:
+             * Clear Redux state if the wallet is disconnected but the session remains active
+             */
             if (!connected && user.address) {
                 dispatch(signOutUser());
             }
@@ -94,16 +103,6 @@ export default function SidebarUserInfo() {
                         className={clsx('w-full brand-gradient shadow-sm justify-start overflow-hidden text-[12px]')}
                     />
                 </div>
-
-                {/* Separate Sign Out button for better UX */}
-                {/* {user.address && (
-                    <button
-                        onClick={() => dispatch(signOutUser())}
-                        className="text-[10px] text-red-500 text-left hover:underline mt-1"
-                    >
-                        Sign out
-                    </button>
-                )} */}
             </div>
         </div>
     );

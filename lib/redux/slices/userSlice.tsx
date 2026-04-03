@@ -50,7 +50,7 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        // Action khi connect ví thành công
+        // Action when connect wallet successfully
         signInSuccess: (state, action: PayloadAction<{ address: string; walletName?: string }>) => {
             state.address = action.payload.address;
             state.walletName = action.payload.walletName || null;
@@ -58,16 +58,16 @@ export const userSlice = createSlice({
             state.loading = false;
         },
 
-        // Action khi logout hoặc disconnect ví
+        // Action when logout or disconnect wallet
         signOutUser: (state) => {
             state.address = null;
             state.walletName = null;
             state.isAuthenticated = false;
         },
 
-        // Action để bật trạng thái loading khi đang chờ connect
+        // Action to turn on the loading state when waiting for connect the wallet
         setLoading: (state, action: PayloadAction<boolean>) => {
-            state.loading = action.current;
+            state.loading = action.payload;
         }
     },
 });
