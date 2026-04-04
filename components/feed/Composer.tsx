@@ -12,14 +12,16 @@ import { RootState } from "@/lib/redux/store";
 import { closeCommentModal } from "@/lib/redux/slices/modalSlice";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-interface PostInputProps {
+import { Comment } from "@/types";
+import { usePost } from "@/contexts/PostProvider";
+interface ComposerProps {
     insideModal?: boolean,
     postId?: string,
     onSuccess?: (newPost: any) => void;
+    type?: string
 }
 
-export default function PostInput({ insideModal, postId, onSuccess }: PostInputProps) {
+export default function Composer({ insideModal, postId, onSuccess }: ComposerProps) {
     const { account, wallet } = useWallet();
     const { uploadFileToRcp } = useUploadFile();
     const { submitFileToChain } = useSubmitFileToChain();
@@ -31,9 +33,11 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
     const [uploadStage, setUploadStage] = useState<string>('');
     const [caption, setCaption] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { addNewPost } = usePost();
 
     const commentDetails = useSelector((state: RootState) => state.modals.commentPostDetails);
     const [newComment, setNewComment] = useState("");
+    const [comments, setComments] = useState<Comment[]>([]);
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -123,7 +127,7 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
             setUploadProgress(100);
             setUploadStage('Success!');
 
-            // UI Reset
+            // Reset Composer state
             if (mediaPreviewUrl) URL.revokeObjectURL(mediaPreviewUrl);
             setMediaFile(null);
             setMediaPreviewUrl(null);
@@ -134,10 +138,11 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
                 style: { background: '#F4AF01', color: '#fff' }
             });
 
-            // Callback to update UI immediately
+            // Instant UI update: Add new post to the top of the feed
             const responseJson = await saveResponse.json();
-            if (onSuccess && responseJson.success) {
-                onSuccess(responseJson.post);
+            const newPost = responseJson.post;
+            if (newPost) {
+                addNewPost(newPost);
             }
 
         } catch (error) {
@@ -172,14 +177,18 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
                 body: JSON.stringify({ content: newComment }),
             });
 
+            // Inside sendPost function
             if (response.ok) {
-                const data = await response.json();
-                // setComments((prev) => [...prev, data.comment]);
+                const responseData = await response.json();
                 setNewComment("");
+                // Callback to update UI immediately
+                if (onSuccess) {
+                    onSuccess(responseData);
+                }
+                dispatch(closeCommentModal());
                 toast.success("Comment sent successfully!", {
                     style: { background: '#F4AF01', color: '#fff' }
                 });
-                dispatch(closeCommentModal());
             }
         } catch (error) {
             console.error("Error submitting comment:", error);
@@ -254,7 +263,7 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
                     )}
 
                     <button
-                        onClick={(event) => insideModal ? sendComment(event) : sendPost()}
+                        onClick={(event) => (insideModal) ? sendComment(event) : sendPost()}
                         disabled={isUploading || (insideModal ? !newComment : !caption)}
                         className=" bg-[#F4AF01] text-white w-[80px] h-[36px] 
                         rounded-full text-sm disabled:opacity-60 transition-all font-medium tracking-wide"

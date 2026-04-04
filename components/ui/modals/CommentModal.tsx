@@ -1,32 +1,20 @@
-"use client"
+"use client";
 
-import { Modal } from '@mui/material'
-import React from 'react'
+import { Modal } from '@mui/material';
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/redux/store";
 import { openCommentModal, closeCommentModal } from "@/lib/redux/slices/modalSlice";
 import PostContent from "@/components/post/PostContent";
 import Composer from "@/components/feed/Composer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { usePost } from '@/contexts/PostProvider';
 
 export default function CommentModal() {
     const open = useSelector((state: RootState) => state.modals.commentModalOpen);
     const commentDetails = useSelector((state: RootState) => state.modals.commentPostDetails);
     const dispatch = useDispatch();
-    const postId = commentDetails.postId;
+    const { refreshOnePost } = usePost();
 
-    const fetchComments = async () => {
-        try {
-            const response = await fetch(`/api/posts/${postId}/comments`);
-            if (!response.ok) {
-                throw new Error("Failed to fetch comments");
-            }
-            const data = await response.json();
-            // setComments(data.comments || []);
-        } catch (error) {
-            console.error("Error fetching comments:", error);
-        }
-    };
     return (
         <>
             <Modal
@@ -53,6 +41,8 @@ export default function CommentModal() {
                             <Composer
                                 insideModal={true}
                                 postId={commentDetails.postId}
+                                // Callback to refresh only the commented post in the Feed
+                                onSuccess={() => refreshOnePost(commentDetails.postId)}
                             />
                         </div>
                         <div className="absolute w-0.5 h-29 bg-gray-300 
