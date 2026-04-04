@@ -1,9 +1,11 @@
 'use client';
 
-import { ArrowLeftIcon, ChatBubbleLeftEllipsisIcon, HeartIcon, ChartBarIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ChatBubbleLeftEllipsisIcon, HeartIcon, ChartBarIcon, ArrowUpTrayIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { use, useEffect, useState } from "react";
 import { Post, Comment as CommentType } from '@/types';
+import { openCommentModal, setCommentDetails } from "@/lib/redux/slices/modalSlice";
+import { useDispatch } from "react-redux";
 
 // Sub-component for individual comments
 function CommentItem({ username, displayName, content }: any) {
@@ -28,6 +30,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     const [post, setPost] = useState<Post | null>(null);
     const [comments, setComments] = useState<CommentType[]>([]);
     const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -111,7 +114,26 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
                     {/* Stats & Actions */}
                     <div className="border-b border-gray-100 p-3 flex justify-evenly">
-                        <ChatBubbleLeftEllipsisIcon className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-blue-400" />
+                        <div className="relative">
+                            <ChatBubbleOvalLeftEllipsisIcon
+                                className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-blue-400"
+                                onClick={() => {
+                                    dispatch(setCommentDetails({
+                                        displayName: post.user?.display_name,
+                                        username: post.user?.username,
+                                        userId: post.user_id,
+                                        caption: post.caption,
+                                        shelbyFileUrl: post.shelby_file_url,
+                                        postId: post.id
+                                    }))
+                                    dispatch(openCommentModal())
+                                }}
+
+                            />
+                            <span className="absolute text-xs top-1 -right-3">
+                                {post?.comments_count}
+                            </span>
+                        </div>
                         <HeartIcon className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-red-500" />
                         <ChartBarIcon className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-blue-400" />
                         <ArrowUpTrayIcon className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-blue-400" />

@@ -263,7 +263,7 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
 
                     <button
                         onClick={(event) => insideModal ? sendComment(event) : sendPost()}
-                        disabled={insideModal ? !newComment : !caption}
+                        disabled={isUploading || (insideModal ? !newComment : !caption)}
                         className=" bg-[#F4AF01] text-white w-[80px] h-[36px] 
                         rounded-full text-sm disabled:opacity-60 transition-all font-medium tracking-wide"
                     >
