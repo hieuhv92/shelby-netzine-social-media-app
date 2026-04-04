@@ -109,9 +109,9 @@ export default function Sidebar() {
                     </button>
                 </ul>
 
-                <div className="mt-auto">
+                {/* <div className="mt-auto">
                     <SidebarUserInfo />
-                </div>
+                </div> */}
             </div>
         </nav>
     );

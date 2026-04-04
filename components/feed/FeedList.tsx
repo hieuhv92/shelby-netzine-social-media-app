@@ -13,20 +13,20 @@ export default function FeedList() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                setIsLoading(true)
-                const response = await fetch('/api/posts')
+                setIsLoading(true);
+                const response = await fetch('/api/posts');
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch posts')
+                    throw new Error('Failed to fetch posts');
                 }
 
-                const data = await response.json()
+                const data = await response.json();
                 setPosts(data.posts || [])
             } catch (err) {
-                console.error('Error fetching posts:', err)
-                setError(err instanceof Error ? err.message : 'Failed to load posts')
+                console.error('Error fetching posts:', err);
+                setError(err instanceof Error ? err.message : 'Failed to load posts');
             } finally {
-                setIsLoading(false)
+                setIsLoading(false);
             }
         }
 
@@ -62,12 +62,6 @@ export default function FeedList() {
 
     return (
         <div className="flex-grow max-w-2xl border-x border-gray-100 min-h-screen">
-            <div className="py-4 px-3 text-lg sm:text-xl sticky top-0 z-50
-            bg-white bg-opacity-80 backdrop-blur-sm font-bold 
-            border-b border-gray-100"
-            >
-                Home
-            </div>
 
             <Composer onSuccess={addNewPostToFeed} />
 

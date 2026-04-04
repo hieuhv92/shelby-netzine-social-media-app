@@ -5,7 +5,7 @@ import React from 'react'
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/redux/store";
 import { openCommentModal, closeCommentModal } from "@/lib/redux/slices/modalSlice";
-import PostHeader from "@/components/post/PostCard";
+import PostContent from "@/components/post/PostContent";
 import Composer from "@/components/feed/Composer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -42,7 +42,7 @@ export default function CommentModal() {
                         onClick={() => dispatch(closeCommentModal())}
                     />
                     <div className='pt-5 pb-10 px-0 sm:px-5 flex flex-col'>
-                        <PostHeader
+                        <PostContent
                             username={commentDetails.username}
                             caption={commentDetails.caption}
                             replyTo={commentDetails.username}

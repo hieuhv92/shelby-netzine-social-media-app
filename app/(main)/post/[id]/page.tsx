@@ -1,11 +1,9 @@
 'use client';
 
 import { ArrowLeftIcon, ChatBubbleLeftEllipsisIcon, HeartIcon, ChartBarIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import Image from "next/image";
 import { use, useEffect, useState } from "react";
 import { Post, Comment as CommentType } from '@/types';
-import { useRouter } from "next/navigation";
 
 // Sub-component for individual comments
 function CommentItem({ username, displayName, content }: any) {
@@ -27,10 +25,9 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     const resolvedParams = use(params);
     const postId = resolvedParams.id;
 
-    const [post, setPost] = useState<Post | null>(null)
-    const [comments, setComments] = useState<CommentType[]>([])
-    const [loading, setLoading] = useState(true)
-    const router = useRouter()
+    const [post, setPost] = useState<Post | null>(null);
+    const [comments, setComments] = useState<CommentType[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -60,17 +57,6 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     // Renders ONLY the middle column content
     return (
         <div className="bg-white min-h-screen">
-            {/* Sticky Header */}
-            <div className="py-2 px-3 sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex items-center">
-                <button
-                    onClick={() => router.back()}
-                    className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer"
-                >
-                    <ArrowLeftIcon className="w-5 h-5 text-[#0F1419]" />
-                </button>
-                <h2 className="text-xl font-bold ml-5">Post</h2>
-            </div>
-
             {loading ? (
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
@@ -93,7 +79,9 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                             />
                             <div className="flex flex-col">
                                 <span className="font-bold">{post.user?.username}</span>
-                                <span className="text-gray-500 text-sm">@{post.user?.display_name}</span>
+                                {post.user?.display_name &&
+                                    <span className="text-gray-500 text-sm">@{post.user?.display_name}</span>
+                                }
                             </div>
                         </div>
 
@@ -102,7 +90,13 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                         {post.shelby_file_url && (
                             <div className="rounded-2xl overflow-hidden border border-gray-100">
                                 {post.file_type === 'image' ? (
-                                    <img src={post.shelby_file_url} alt="Post image" className="w-full h-auto" />
+                                    <img src={post.shelby_file_url}
+                                        alt="Post image"
+                                        className="w-full h-auto"
+                                        onError={(e) => {
+                                            e.currentTarget.src = '/assets/placeholder_image_01.jpg';
+                                        }}
+                                    />
                                 ) : (
                                     <video src={post.shelby_file_url} controls className="w-full" />
                                 )}
