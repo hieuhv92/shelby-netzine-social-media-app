@@ -130,22 +130,14 @@ export default function PostInput({ insideModal, postId, onSuccess }: PostInputP
             setCaption('');
             if (fileInputRef.current) fileInputRef.current.value = '';
 
-            // Navigation & Data Refresh
-            if (insideModal) {
-                dispatch(closeCommentModal());
-            } else {
-                router.push("/"); // Redirect to Home
-                router.refresh(); // Refresh Server Components data
-            }
-
             toast.success("Post sent successfully!", {
                 style: { background: '#F4AF01', color: '#fff' }
             });
 
             // Callback to update UI immediately
-            if (onSuccess) {
-                const data = await saveResponse.json();
-                onSuccess(data.post);
+            const responseJson = await saveResponse.json();
+            if (onSuccess && responseJson.success) {
+                onSuccess(responseJson.post);
             }
 
         } catch (error) {

@@ -10,32 +10,28 @@ export default function FeedList() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetch('/api/posts');
+    const fetchPosts = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch('/api/posts');
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch posts');
-                }
-
-                const data = await response.json();
-                setPosts(data.posts || [])
-            } catch (err) {
-                console.error('Error fetching posts:', err);
-                setError(err instanceof Error ? err.message : 'Failed to load posts');
-            } finally {
-                setIsLoading(false);
+            if (!response.ok) {
+                throw new Error('Failed to fetch posts');
             }
-        }
 
+            const data = await response.json();
+            setPosts(data.posts || [])
+        } catch (err) {
+            console.error('Error fetching posts:', err);
+            setError(err instanceof Error ? err.message : 'Failed to load posts');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchPosts();
     }, []);
-
-    const addNewPostToFeed = (newPost) => {
-        setPosts((posts) => [newPost, ...posts]);
-    };
 
     if (isLoading) {
         return (
@@ -63,7 +59,7 @@ export default function FeedList() {
     return (
         <div className="flex-grow max-w-2xl border-x border-gray-100 min-h-screen">
 
-            <Composer onSuccess={addNewPostToFeed} />
+            <Composer onSuccess={fetchPosts} />
 
             {isLoading ? (
                 <div className="p-10 text-center animate-pulse">Loading...</div>

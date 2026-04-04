@@ -18,7 +18,7 @@ export default function PostCard({ post, id }: PostProps) {
         <div className="border-b border-gray-100">
             <Link href={'/post/' + id}>
                 <PostContent
-                    username={post?.user?.username}
+                    username={user?.username}
                     caption={post?.caption}
                     timestamp={post?.created_at}
                     fileType={post?.file_type}
