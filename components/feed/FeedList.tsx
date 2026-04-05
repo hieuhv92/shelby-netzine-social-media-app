@@ -3,11 +3,28 @@
 import Composer from "@/components/feed/Composer";
 import PostCard from "@/components/post/PostCard";
 import { useEffect, useState } from 'react';
-import { usePost } from "@/contexts/PostProvider";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/redux/store";
+import { setLoading } from "@/lib/redux/slices/userSlice";
+import { setPosts } from "@/lib/redux/slices/postSlice";
 
 export default function FeedList() {
     const [error, setError] = useState<string | null>(null);
-    const { posts, isLoading, fetchAllPosts } = usePost();
+    const dispatch = useDispatch();
+    const { posts, isLoading } = useSelector((state: RootState) => state.post);
+
+    const fetchAllPosts = async () => {
+        dispatch(setLoading(true));
+        try {
+            const response = await fetch('/api/posts');
+            const data = await response.json();
+            dispatch(setPosts(data.posts || []));
+        } catch (err) {
+            console.error(err);
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
 
     useEffect(() => {
         // Initial data fetch on mount

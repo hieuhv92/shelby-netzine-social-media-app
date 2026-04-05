@@ -9,10 +9,10 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { useDispatch, useSelector } from "react-redux";
 import { closeCommentModal, closePostModal } from "@/lib/redux/slices/modalSlice";
 import { toast } from "sonner";
-import { usePost } from "@/contexts/PostProvider";
 import { useRouter, usePathname } from "next/navigation";
 import { RootState } from "@/lib/redux/store";
 import { CalendarIcon, ChartBarIcon, FaceSmileIcon, MapPinIcon, PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { addPostToFeed, incrementCommentCount } from "@/lib/redux/slices/postSlice";
 interface ComposerProps {
     type: 'post' | 'comment';
     insideModal?: boolean,
@@ -25,7 +25,6 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
     const { account, wallet } = useWallet();
     const { uploadFileToRcp } = useUploadFile();
     const { submitFileToChain } = useSubmitFileToChain();
-    const { addNewPost } = usePost();
 
     const [inputText, setInputText] = useState('');
     const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -168,7 +167,7 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
                         }
                     };
                 }
-                addNewPost(newPost);
+                dispatch(addPostToFeed(newPost));
             }
 
             toast.success("Post sent successfully!", {
@@ -219,6 +218,8 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
                 // Callback to update UI immediately
                 if (onSuccess) {
                     onSuccess(responseData);
+                } else if (postId) {
+                    dispatch(incrementCommentCount({ postId }));
                 }
                 dispatch(closeCommentModal());
                 toast.success("Comment sent successfully!", {
