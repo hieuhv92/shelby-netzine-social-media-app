@@ -69,8 +69,29 @@ export default function Composer({ insideModal, postId, onSuccess }: ComposerPro
     };
 
     const sendPost = async () => {
-        // Validation: Require at least Caption OR Media, and a connected Wallet
-        if ((!caption.trim() && !mediaFile) || !account || !wallet) {
+        // Validation: Require at least Caption OR Media
+        if (!caption.trim() && !mediaFile) {
+            toast.error("Please enter some text or upload an image/video!", {
+                style: {
+                    background: '#F4AF01',
+                    color: '#fff',
+                    borderRadius: '8px',
+                },
+                duration: 3000,
+            });
+            return;
+        }
+
+        // Validation: Connected Wallet
+        if (!account || !wallet) {
+            toast.error("Please connect your wallet to continue!", {
+                style: {
+                    background: '#EF4444',
+                    color: '#fff',
+                    borderRadius: '8px',
+                },
+                duration: 4000,
+            });
             return;
         }
 

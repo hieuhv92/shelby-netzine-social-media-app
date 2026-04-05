@@ -8,18 +8,27 @@ import {
     UserIcon,
     EllipsisHorizontalCircleIcon,
     ArrowUpRightIcon,
-    SparklesIcon
+    SparklesIcon,
+    Cog6ToothIcon,
+    PaintBrushIcon,
+    QuestionMarkCircleIcon,
+    BanknotesIcon,
+    CurrencyDollarIcon,
+    PlusIcon
 }
     from "@heroicons/react/24/outline";
 import SidebarUserInfo from "./SidebarUserInfo";
 import { useEffect, useRef, useState } from "react";
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import Link from 'next/link';
+import { openPostModal } from "@/lib/redux/slices/modalSlice";
+import { useDispatch } from "react-redux";
 
 export default function Sidebar() {
     const [showMore, setShowMore] = useState(false);
     const moreMenuRef = useRef(null);
-    const { account } = useWallet()
+    const { account } = useWallet();
+    const dispatch = useDispatch();
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -31,6 +40,16 @@ export default function Sidebar() {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    // Function to handle Minting
+    const handleMintClick = () => {
+        if (!account) return;
+        window.open(
+            `https://docs.shelby.xyz/apis/faucet/shelbyusd?address=${account.address}`,
+            '_blank',
+            'noopener,noreferrer'
+        );
+    };
 
     return (
         <nav className="h-screen flex flex-col fixed top-0 p-3 xl:ml-24 w-max z-50">
@@ -70,48 +89,81 @@ export default function Sidebar() {
 
                         {/* Tooltip / Dropdown Menu */}
                         {showMore && (
-                            <div className="absolute bottom-full left-0 mb-2 w-56 bg-white shadow-xl border border-gray-100 rounded-xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                            <div className="absolute bottom-full left-0 mb-3 w-56 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
                                 <div className="flex flex-col py-2">
-                                    <button
-                                        className={`px-4 py-3 text-left transition w-full flex items-center justify-between cursor-pointer ${!account
-                                            ? 'opacity-40 cursor-not-allowed text-gray-400'
-                                            : 'hover:bg-amber-50 text-[#F4AF01] font-bold bg-amber-50/30'
-                                            }`}
-                                        disabled={!account}
-                                        onClick={() => {
-                                            if (!account) return;
-                                            window.open(
-                                                `https://docs.shelby.xyz/apis/faucet/shelbyusd?address=${account.address}`,
-                                                '_blank',
-                                                'noopener,noreferrer'
-                                            );
-                                            setShowMore(false);
-                                        }}
-                                    >
-                                        <div className="flex items-center space-x-2">
-                                            <SparklesIcon className="w-4 h-4" />
-                                            <span>Mint shelbyUSD</span>
-                                        </div>
 
-                                        {account && (
-                                            <ArrowUpRightIcon className="w-4 h-4 ml-2 opacity-70" />
-                                        )}
-                                    </button>
-                                    {/* <div className="border-t border-gray-100 my-1"></div> */}
+                                    {/* Item 1: Settings (Ví dụ link bình thường) */}
+                                    <Link href="#" onClick={() => setShowMore(false)}>
+                                        <div className="px-4 py-3 flex items-center space-x-3 hover:bg-gray-100 transition duration-200 cursor-pointer">
+                                            <Cog6ToothIcon className="w-5 h-5 text-gray-700" />
+                                            <span className="text-[15px] font-medium text-gray-900">Settings</span>
+                                        </div>
+                                    </Link>
+
+                                    {/* Item 2: Help Center */}
+                                    <Link href="#" onClick={() => setShowMore(false)}>
+                                        <div className="px-4 py-3 flex items-center space-x-3 hover:bg-gray-100 transition duration-200 cursor-pointer">
+                                            <QuestionMarkCircleIcon className="w-5 h-5 text-gray-700" />
+                                            <span className="text-[15px] font-medium text-gray-900">Help Center</span>
+                                        </div>
+                                    </Link>
+
+                                    <div className="border-t border-gray-100 my-1"></div>
+
+                                    {/* Item 3: Display/Dark Mode (Ví dụ) */}
+                                    <div className="px-4 py-3 flex items-center space-x-3 hover:bg-gray-100 transition duration-200 cursor-pointer">
+                                        <PaintBrushIcon className="w-5 h-5 text-gray-700" />
+                                        <span className="text-[15px] font-medium text-gray-900">Display</span>
+                                    </div>
+
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <button className="hidden xl:block bg-[#F4AF01] w-[200px] h-[52px] 
-                    rounded-full text-white font-bold cursor-pointer shadow-md mt-4 hover:bg-[#d99b01] transition">
-                        POST
-                    </button>
+                    {/* Post Button Container */}
+                    <div className="mt-4" onClick={() => dispatch(openPostModal())}>
+                        {/* Desktop Button: Show on XL screens, Hide on smaller screens */}
+                        <button className="hidden xl:block bg-[#F4AF01] w-[200px] h-[52px] 
+        rounded-full text-white font-bold cursor-pointer shadow-md hover:bg-[#d99b01] transition">
+                            POST
+                        </button>
+
+                        {/* Mobile/Tablet Button */}
+                        <button
+                            className="xl:hidden bg-[#F4AF01] w-12 h-12 rounded-full flex items-center justify-center 
+    text-white cursor-pointer shadow-md hover:bg-[#d99b01] transition mx-auto"
+                            onClick={() => dispatch(openPostModal())}
+                        >
+                            <PlusIcon className="w-6 h-6 stroke-[2.5]" />
+                        </button>
+                    </div>
                 </ul>
 
-                {/* <div className="mt-auto">
-                    <SidebarUserInfo />
-                </div> */}
+                {/* Bottom Section (Fixed Items) */}
+                <div className="mt-auto flex flex-col space-y-2">
+                    {/* Mint Button - Moved here */}
+                    <div
+                        onClick={handleMintClick}
+                        className={`block w-fit transition ${!account
+                            ? 'opacity-40 cursor-not-allowed grayscale'
+                            : 'cursor-pointer group'
+                            }`}
+                    >
+                        <SidebarLink
+                            text="Mint ShelbyUSD"
+                            // Icon={SparklesIcon}
+                            Icon={CurrencyDollarIcon}
+                            className="text-amber-500 font-bold"
+                            active={false}
+                        />
+                    </div>
+
+                    {/* User Info */}
+                    {/* <div className="pt-2">
+                        <SidebarUserInfo />
+                    </div> */}
+                </div>
             </div>
         </nav>
     );
@@ -122,12 +174,13 @@ interface SidebarLinkProps {
     Icon: React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
         title?: string;
         titleId?: string;
-    } & React.RefAttributes<SVGSVGElement>>
+    } & React.RefAttributes<SVGSVGElement>>,
+    className?: string;
 }
 
-function SidebarLink({ text, Icon }: SidebarLinkProps) {
+function SidebarLink({ text, Icon, className }: SidebarLinkProps) {
     return (
-        <li className="flex items-center text-xl mb-2 space-x-3 p-2.5">
+        <li className={`flex items-center text-xl mb-2 space-x-3 p-2.5 rounded-full hover:bg-gray-200 hover:bg-opacity-30 transition duration-200 ease-out cursor-pointer group w-fit ${className || ""}`}>
             <Icon className="h-7" />
             <span className="hidden xl:block">{text}</span>
         </li >
@@ -138,11 +191,11 @@ const Logo = (props: { className?: string }) => {
     return (
         <svg
             className={props.className}
-            xmlns="http://www.w3.org"
+            xmlns="http://w3.org"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
