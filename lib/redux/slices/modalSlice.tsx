@@ -1,4 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
+
+interface ModalState {
+    commentModalOpen: boolean;
+    commentPostDetails: any;
+    postModalOpen: boolean; // Thêm dòng này
+}
 
 const initialState = {
     signUpModalOpen: false,
@@ -11,7 +17,8 @@ const initialState = {
         caption: "",
         shelbyFileUrl: "",
         postId: ""
-    }
+    },
+    postModalOpen: false
 }
 
 const modalSlice = createSlice({
@@ -43,7 +50,13 @@ const modalSlice = createSlice({
             state.commentPostDetails.caption = action.payload.caption;
             state.commentPostDetails.shelbyFileUrl = action.payload.shelbyFileUrl;
             state.commentPostDetails.postId = action.payload.postId;
-        }
+        },
+        openPostModal: (state) => {
+            state.postModalOpen = true;
+        },
+        closePostModal: (state) => {
+            state.postModalOpen = false;
+        },
     }
 });
 
@@ -54,7 +67,9 @@ export const {
     closeLogInModal,
     openCommentModal,
     closeCommentModal,
-    setCommentDetails
+    setCommentDetails,
+    openPostModal,
+    closePostModal
 } = modalSlice.actions
 
 export default modalSlice.reducer

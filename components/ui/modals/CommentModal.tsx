@@ -39,6 +39,7 @@ export default function CommentModal() {
                         />
                         <div className='mt-4'>
                             <Composer
+                                type="comment"
                                 insideModal={true}
                                 postId={commentDetails.postId}
                                 // Callback to refresh only the commented post in the Feed

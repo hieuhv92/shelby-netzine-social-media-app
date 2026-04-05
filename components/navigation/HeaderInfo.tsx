@@ -93,11 +93,11 @@ export default function HeaderInfo() {
 
                 {/* WALLET ADDRESS & SELECTOR */}
                 <div className="flex flex-col items-end overflow-hidden">
-                    {user.address && (
+                    {/* {user.address && (
                         <span className="text-[11px] sm:text-xs font-semibold text-[#0F1419] truncate mb-1 px-1 uppercase tracking-tight">
                             {`${user.address.slice(0, 6)}...${user.address.slice(-4)}`}
                         </span>
-                    )}
+                    )} */}
 
                     <div
                         ref={walletSelectorRef}

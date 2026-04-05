@@ -17,7 +17,7 @@ export default function FeedList() {
     return (
         <div className="flex-grow max-w-2xl border-x border-gray-100 min-h-screen">
             {/* Post creation - Internally handles state via Context */}
-            <Composer />
+            <Composer type="post" />
 
             {/* 1. Priority: Show loading spinner if fetching */}
             {isLoading ? (

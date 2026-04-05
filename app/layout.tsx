@@ -4,6 +4,8 @@ import "./globals.css";
 import StoreProvider from "@/lib/redux/StoreProvider";
 import { WalletProvider } from "@/components/providers/WalletProvider";
 import { Toaster } from "@shelby-protocol/ui/components";
+import { PostProvider } from "@/contexts/PostProvider";
+import AuthProvider from "@/contexts/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,8 +32,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <StoreProvider>
           <WalletProvider>
-            {children}
-            <Toaster />
+            <AuthProvider>
+              <PostProvider>
+                {children}
+                <Toaster />
+              </PostProvider>
+            </AuthProvider>
           </WalletProvider>
         </StoreProvider>
       </body>

@@ -1,39 +1,10 @@
-// import { createSlice } from '@reduxjs/toolkit'
-
-// const initialState = {
-//     displayName: "",
-//     username: "",
-//     email: "",
-//     uid: ""
-// }
-
-// const userSlice = createSlice({
-//     name: "user",
-//     initialState,
-//     reducers: {
-//         signInUser: (state, action) => {
-//             state.displayName = action.payload.displayName
-//             state.username = action.payload.username
-//             state.email = action.payload.email
-//             state.uid = action.payload.uid
-//         },
-//         signOutUser: (state) => {
-//             state.displayName = ""
-//             state.username = ""
-//             state.email = ""
-//             state.uid = ""
-//         }
-//     }
-// });
-
-// export const { signInUser, signOutUser } = userSlice.actions
-
-// export default userSlice.reducer
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
     address: string | null;
+    username: string | null;
+    display_name: string | null;
+    avatar_url: string | null;
     walletName: string | null;
     isAuthenticated: boolean;
     loading: boolean;
@@ -41,6 +12,9 @@ interface UserState {
 
 const initialState: UserState = {
     address: null,
+    username: null,
+    display_name: null,
+    avatar_url: null,
     walletName: null,
     isAuthenticated: false,
     loading: false,
@@ -50,9 +24,12 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        // Action when connect wallet successfully
-        signInSuccess: (state, action: PayloadAction<{ address: string; walletName?: string }>) => {
+        // Action when login or connect wallet
+        signInSuccess: (state, action) => {
             state.address = action.payload.address;
+            state.username = action.payload.username;
+            state.display_name = action.payload.display_name;
+            state.avatar_url = action.payload.avatar_url;
             state.walletName = action.payload.walletName || null;
             state.isAuthenticated = true;
             state.loading = false;

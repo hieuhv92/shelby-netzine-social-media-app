@@ -86,6 +86,13 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     // Handle updates after a new comment is posted
     const handleCommentSuccess = () => {
         fetchComments();        // 1. Refresh local comments list immediately
+        setPost(prev => {
+            if (!prev) return null;
+            return {
+                ...prev,
+                comments_count: (prev.comments_count || 0) + 1
+            };
+        });
         refreshOnePost(postId);  // 2. Sync comment count back to the FeedList in Context
     };
 

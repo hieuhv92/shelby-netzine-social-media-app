@@ -57,7 +57,7 @@ export default function Sidebar() {
                 <div className="py-3">
                     <Link href="/">
                         <div className="p-2.5 rounded-full hover:bg-gray-200 hover:bg-opacity-30 transition duration-200 ease-out cursor-pointer group w-fit">
-                            <Logo className="w-10 h-10 group-hover:scale-110 transition-transform duration-200" />
+                            <NetzinLogo className="w-10 h-10 group-hover:scale-110 transition-transform duration-200" />
                         </div>
                     </Link>
                 </div>
@@ -187,7 +187,7 @@ function SidebarLink({ text, Icon, className }: SidebarLinkProps) {
     )
 }
 
-const Logo = (props: { className?: string }) => {
+const NetzinLogo = (props: { className?: string }) => {
     return (
         <svg
             className={props.className}

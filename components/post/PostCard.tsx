@@ -1,9 +1,9 @@
-import { ArrowUpTrayIcon, ChartBarIcon, ChatBubbleOvalLeftEllipsisIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { Post } from '@/types';
-import { openCommentModal, setCommentDetails } from "@/lib/redux/slices/modalSlice";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
 import PostContent from "./PostContent";
+import { openCommentModal, setCommentDetails } from "@/lib/redux/slices/modalSlice";
+import { ArrowUpTrayIcon, ChartBarIcon, ChatBubbleOvalLeftEllipsisIcon, HeartIcon } from "@heroicons/react/24/outline";
 
 interface PostProps {
     post: Post,
