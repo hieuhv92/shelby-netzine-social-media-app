@@ -17,7 +17,7 @@ const initialState: UserState = {
     avatar_url: null,
     walletName: null,
     isAuthenticated: false,
-    loading: false,
+    loading: true,
 };
 
 export const userSlice = createSlice({

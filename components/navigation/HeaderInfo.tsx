@@ -92,27 +92,28 @@ export default function HeaderInfo() {
                 </div>
 
                 {/* WALLET ADDRESS & SELECTOR */}
-                <div className="flex flex-col items-end overflow-hidden">
-                    {/* {user.address && (
-                        <span className="text-[11px] sm:text-xs font-semibold text-[#0F1419] truncate mb-1 px-1 uppercase tracking-tight">
-                            {`${user.address.slice(0, 6)}...${user.address.slice(-4)}`}
-                        </span>
-                    )} */}
-
+                <div className="flex flex-col items-end">
                     <div
                         ref={walletSelectorRef}
-                        className="min-w-[110px] sm:min-w-[130px] w-full flex-shrink-0"
+                        /* Increased z-index to ensure the Disconnect menu stays on top of other elements */
+                        className="min-w-[120px] sm:min-w-[130px] w-full flex-shrink-0 relative z-50"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <XChainWalletSelector
-                            size="sm"
-                            className={clsx(
-                                'brand-gradient shadow-sm flex items-center justify-center overflow-hidden text-[10px] sm:text-xs',
-                                /* Adjusted height to h-8/h-9 to match the larger text size */
-                                'h-8 sm:h-9 w-full rounded-md px-2 sm:px-4 justify-center xl:justify-start font-medium',
-                                user.loading && 'opacity-50 pointer-events-none'
-                            )}
-                        />
+                        {user.loading ? (
+                            /* 1. Show Skeleton while checking wallet status or logging in */
+                            <div className="h-9 sm:h-9 w-full rounded-md bg-gray-100 animate-pulse border border-gray-100 flex items-center justify-center">
+                                <div className="h-1.5 w-16 bg-gray-200 rounded-full" />
+                            </div>
+                        ) : (
+                            /* 2. Render the actual Selector only after auth status is determined */
+                            <XChainWalletSelector
+                                size="sm"
+                                className={clsx(
+                                    'brand-gradient shadow-sm flex items-center justify-center overflow-hidden text-[12px] sm:text-xs',
+                                    'h-8 sm:h-9 w-full rounded-md px-2 sm:px-4 justify-center xl:justify-start font-medium transition-opacity duration-300'
+                                )}
+                            />
+                        )}
                     </div>
                 </div>
 

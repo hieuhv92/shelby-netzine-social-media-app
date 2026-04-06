@@ -1,6 +1,6 @@
-# Netzin Social Media App - Networking meets the Art of the Magazine. A home for premium content.
+# Netzin Social Media App - Networking in Magazine Style.
 
-The Netzin application is built using Next.js, Supabase, and Shelby
+The Netzin application is built using Next.js, Supabase, and Shelby.
 
 ## Tech Stack
 
@@ -53,15 +53,18 @@ Netzin/
 │   │   └── Composer.tsx        # The "Tweet-style" input box (with #F4AF01 icons)
 │   ├── post/                   # Post & Interaction components
 │   │   ├── PostCard.tsx        # Summary view for FeedList
-│   │   ├── PostDetail.tsx      # Extended view for [id] page
+│   │   ├── PostContent.tsx      # Extended view for [id] page
 │   │   └── CommentItem.tsx     # Individual comment row
 │   ├── navigation/             # Core navigation UI
 │   │   ├── Sidebar.tsx         # Fixed left-side menu
+│   │   ├── HeaderInfo.tsx      # Header information
 │   │   └── Widgets.tsx         # Sticky right-side panel (Trends/Suggestions)
 │   ├── ui/                     # Generic/Atomic UI components
 │   │   ├── modals/             # App-wide modals
 │   │   │   └── CommentModal.tsx
+│   │   │   └── PostModal.tsx
 │   │   └── SignUpPrompt.tsx    # Bottom banner for guests
+│   │   └── LikeButton.tsx      # Like Button
 │   └── providers/              # Context Providers
 │       ├── WalletProvider.tsx  # Blockchain/Wallet connection
 │       └── ToasterProvider.tsx # Notification system

@@ -1,28 +1,24 @@
 "use client";
-import {
-    HomeIcon,
-    HashtagIcon,
-    BellIcon,
-    InboxIcon,
-    BookmarkIcon,
-    UserIcon,
-    EllipsisHorizontalCircleIcon,
-    ArrowUpRightIcon,
-    SparklesIcon,
-    Cog6ToothIcon,
-    PaintBrushIcon,
-    QuestionMarkCircleIcon,
-    BanknotesIcon,
-    CurrencyDollarIcon,
-    PlusIcon
-}
-    from "@heroicons/react/24/outline";
+
 import SidebarUserInfo from "./SidebarUserInfo";
 import { useEffect, useRef, useState } from "react";
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import Link from 'next/link';
 import { openPostModal } from "@/lib/redux/slices/modalSlice";
 import { useDispatch } from "react-redux";
+import {
+    HomeIcon,
+    HashtagIcon,
+    BellIcon,
+    EllipsisHorizontalCircleIcon,
+    SparklesIcon,
+    Cog6ToothIcon,
+    PaintBrushIcon,
+    QuestionMarkCircleIcon,
+    CurrencyDollarIcon,
+    PlusIcon
+}
+    from "@heroicons/react/24/outline";
 
 export default function Sidebar() {
     const [showMore, setShowMore] = useState(false);
@@ -54,10 +50,11 @@ export default function Sidebar() {
     return (
         <nav className="h-screen flex flex-col fixed top-0 p-3 xl:ml-24 w-max z-50">
             <div className="relative h-full flex flex-col">
-                <div className="py-3">
+                <div className="py-2 flex justify-center xl:justify-start">
                     <Link href="/">
-                        <div className="p-2.5 rounded-full hover:bg-gray-200 hover:bg-opacity-30 transition duration-200 ease-out cursor-pointer group w-fit">
-                            <NetzinLogo className="w-10 h-10 group-hover:scale-110 transition-transform duration-200" />
+                        <div className="w-14 h-14 rounded-full hover:bg-gray-200 hover:bg-opacity-30 transition duration-200 ease-out 
+                        cursor-pointer group flex items-center justify-center">
+                            <NetzinLogo className="w-9 h-9 xl:w-9 xl:h-9 group-hover:scale-110 transition-transform duration-200" />
                         </div>
                     </Link>
                 </div>
@@ -187,7 +184,7 @@ function SidebarLink({ text, Icon, className }: SidebarLinkProps) {
     )
 }
 
-const NetzinLogo = (props: { className?: string }) => {
+const OriginalLogo = (props: { className?: string }) => {
     return (
         <svg
             className={props.className}
@@ -203,6 +200,24 @@ const NetzinLogo = (props: { className?: string }) => {
             <circle cx="12" cy="12" r="3" />
             <path d="M12 2v3M12 19v3M22 12h-3M5 12H2" />
             <path d="M18.36 5.64l-2.12 2.12M7.76 16.24l-2.12 2.12" />
+        </svg>
+    );
+};
+
+export const NetzinLogo = (props: { className?: string }) => {
+    return (
+        <svg
+            className={props.className}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d="M6 20V4l12 16V4" />
+            <path d="M14 4h4" />
+            <path d="M6 20h4" />
         </svg>
     );
 };
