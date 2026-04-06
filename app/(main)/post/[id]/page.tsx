@@ -1,14 +1,19 @@
 'use client';
 
-import { ArrowLeftIcon, ChatBubbleLeftEllipsisIcon, HeartIcon, ChartBarIcon, ArrowUpTrayIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { use, useEffect, useState, useRef } from "react";
-import { Post, Comment as CommentType } from '@/types';
-import { openCommentModal, setCommentDetails } from "@/lib/redux/slices/modalSlice";
+import { setCommentDetails } from "@/lib/redux/slices/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import Composer from "@/components/feed/Composer";
 import { RootState } from "@/lib/redux/store";
-import { addCommentToCurrentPost, incrementCommentCount, setCommentsForCurrentPost, setCurrentPost } from "@/lib/redux/slices/postSlice";
+import { ChartBarIcon, ArrowUpTrayIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import {
+    addCommentToCurrentPost,
+    incrementCommentCount,
+    setCommentsForCurrentPost,
+    setCurrentPost
+} from "@/lib/redux/slices/postSlice";
+import LikeButton from "@/components/ui/LikeButton";
 
 export default function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = use(params);
@@ -143,7 +148,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                     <div className="border-b border-gray-100 p-3 flex justify-evenly">
                         <div className="relative">
                             <ChatBubbleOvalLeftEllipsisIcon
-                                className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-blue-400"
+                                className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-[#F4AF01] transition"
                                 onClick={() => {
                                     dispatch(setCommentDetails({
                                         displayName: post.user?.display_name,
@@ -157,13 +162,14 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                                 }}
                             />
                             <span className="absolute text-xs top-1 -right-3">
-                                {/* FIX: Lấy trực tiếp từ object post của Redux */}
                                 <span>{post.comments_count || 0}</span>
                             </span>
                         </div>
-                        <HeartIcon className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-red-500" />
-                        <ChartBarIcon className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-blue-400" />
-                        <ArrowUpTrayIcon className="w-[22px] h-[22px] text-[#707E89] cursor-pointer hover:text-blue-400" />
+
+                        <LikeButton post={post} />
+
+                        <ChartBarIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed hover:text-[#F4AF01] transition" />
+                        <ArrowUpTrayIcon className="w-[22px] h-[22px] text-[#707E89] cursor-not-allowed hover:text-[#F4AF01] transition" />
                     </div>
 
                     <div ref={composerRef} className="border-b border-gray-100">

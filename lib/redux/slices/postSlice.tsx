@@ -39,7 +39,7 @@ interface PostState {
 // --- INITIAL STATE ---
 const initialState: PostState = {
     posts: [],
-    isLoading: false,
+    isLoading: true,
     currentPost: null,
 };
 
@@ -119,6 +119,22 @@ const postSlice = createSlice({
                 state.currentPost.comments = action.payload;
             }
         },
+        toggleLikePost: (state, action: PayloadAction<{ postId: string }>) => {
+            const { postId } = action.payload;
+
+            // 1.Update Feed List
+            const postInFeed = state.posts.find(p => p.id === postId);
+            if (postInFeed) {
+                postInFeed.is_liked = !postInFeed.is_liked;
+                postInFeed.likes_count += postInFeed.is_liked ? 1 : -1;
+            }
+
+            // 2. Update the current post
+            if (state.currentPost?.id === postId) {
+                state.currentPost.is_liked = !state.currentPost.is_liked;
+                state.currentPost.likes_count += state.currentPost.is_liked ? 1 : -1;
+            }
+        },
     },
 });
 
@@ -130,7 +146,8 @@ export const {
     setCurrentPost,
     incrementCommentCount,
     addCommentToCurrentPost,
-    setCommentsForCurrentPost
+    setCommentsForCurrentPost,
+    toggleLikePost
 } = postSlice.actions;
 
 export default postSlice.reducer;

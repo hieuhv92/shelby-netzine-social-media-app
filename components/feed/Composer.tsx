@@ -201,6 +201,19 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
         // if (!inputText.trim() || submittingComment) return;
         if (!inputText.trim()) return;
 
+        // Validation: Connected Wallet
+        if (!account || !wallet) {
+            toast.error("Please connect your wallet to continue!", {
+                style: {
+                    background: '#EF4444',
+                    color: '#fff',
+                    borderRadius: '8px',
+                },
+                duration: 4000,
+            });
+            return;
+        }
+
         // setSubmittingComment(true);
         try {
             const response = await fetch(`/api/posts/${postId}/comments`, {

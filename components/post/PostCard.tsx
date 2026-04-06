@@ -3,7 +3,8 @@ import { useDispatch } from "react-redux";
 import Link from "next/link";
 import PostContent from "./PostContent";
 import { openCommentModal, setCommentDetails } from "@/lib/redux/slices/modalSlice";
-import { ArrowUpTrayIcon, ChartBarIcon, ChatBubbleOvalLeftEllipsisIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, ChartBarIcon, ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import LikeButton from '../ui/LikeButton';
 
 interface PostProps {
     post: Post,
@@ -46,19 +47,14 @@ export default function PostCard({ post, id }: PostProps) {
                         {post?.comments_count}
                     </span>
                 </div>
+
+                <LikeButton post={post} />
+
                 <div className="relative">
-                    <HeartIcon className="w-[22px] h-[22px] cursor-pointer
-                    hover:text-[#F4AF01] transition"
-                    />
-                    <span className="absolute text-xs top-1 -right-3">
-                        {post?.likes_count}
-                    </span>
+                    <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed hover:text-[#F4AF01]" />
                 </div>
                 <div className="relative">
-                    <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed" />
-                </div>
-                <div className="relative">
-                    <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed" />
+                    <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed hover:text-[#F4AF01]" />
                 </div>
             </div>
         </div>

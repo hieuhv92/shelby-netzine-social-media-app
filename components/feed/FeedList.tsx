@@ -14,7 +14,6 @@ export default function FeedList() {
     const { posts, isLoading } = useSelector((state: RootState) => state.post);
 
     const fetchAllPosts = async () => {
-        dispatch(setLoading(true));
         try {
             const response = await fetch('/api/posts');
             const data = await response.json();
