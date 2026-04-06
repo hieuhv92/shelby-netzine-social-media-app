@@ -41,16 +41,30 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
+
         if (file) {
+            // 1. Define limits (5MB for images, 50MB for videos)
+            const isImage = file.type.startsWith('image/');
+            const fileSizeMB = file.size / (1024 * 1024);
+            const limit = isImage ? 5 : 50;
+
+            // 2. Validate file size
+            if (fileSizeMB > limit) {
+                toast.error(`File too large! Max ${limit}MB for ${isImage ? 'images' : 'videos'}.`, {
+                    style: { background: '#EF4444', color: '#fff' }
+                });
+                // Reset input to prevent uploading the invalid file
+                if (e.target) e.target.value = "";
+                return;
+            }
+
+            // 3. If valid, set state and create preview
             setMediaFile(file);
-            // Create a URL for local preview
             setMediaPreviewUrl(URL.createObjectURL(file));
         } else {
             setMediaFile(null);
             setMediaPreviewUrl(null);
         }
-        // Optional: reset the file input value after selection if needed for re-uploading same file
-        // e.target.value = ""; 
     };
 
     const handleIconClick = () => {
@@ -67,30 +81,36 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
     };
 
     const sendPost = async () => {
-        // Validation: Require at least inputText OR Media
+        // 1. Validation: Require at least Text or Media
         if (!inputText.trim() && !mediaFile) {
             toast.error("Please enter some text or upload an image/video!", {
-                style: {
-                    background: '#F4AF01',
-                    color: '#fff',
-                    borderRadius: '8px',
-                },
+                style: { background: '#F4AF01', color: '#fff', borderRadius: '8px' },
                 duration: 3000,
             });
             return;
         }
 
-        // Validation: Connected Wallet
+        // 2. Validation: Ensure Wallet Connection
         if (!account || !wallet) {
             toast.error("Please connect your wallet to continue!", {
-                style: {
-                    background: '#EF4444',
-                    color: '#fff',
-                    borderRadius: '8px',
-                },
+                style: { background: '#EF4444', color: '#fff', borderRadius: '8px' },
                 duration: 4000,
             });
             return;
+        }
+
+        // 3. Validation: Media File Size Limits (5MB for images, 50MB for videos)
+        if (mediaFile) {
+            const isImage = mediaFile.type.startsWith('image/');
+            const fileSizeMB = mediaFile.size / (1024 * 1024);
+            const limit = isImage ? 5 : 50;
+
+            if (fileSizeMB > limit) {
+                toast.error(`File too large! Max ${limit}MB allowed.`, {
+                    style: { background: '#EF4444', color: '#fff' }
+                });
+                return;
+            }
         }
 
         setIsUploading(true);
@@ -100,22 +120,25 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
         try {
             let fileId = null;
             let fileUrl = null;
-            let fileType = 'text'; // Default to text
+            let fileType = 'text';
 
-            // --- MEDIA CASE: Run Shelby Blockchain Workflow ---
+            // --- MEDIA CASE: Shelby Blockchain Workflow ---
             if (mediaFile) {
                 fileType = mediaFile.type.startsWith('image/') ? 'image' : 'video';
                 const timestamp = Date.now();
                 const uniqueBlobName = `${timestamp}-${mediaFile.name}`;
 
+                // Step A: Encode media file
                 setUploadStage('Preparing media...');
                 setUploadProgress(10);
                 const commitments = await encodeFile(mediaFile);
 
+                // Step B: Submit to Blockchain
                 setUploadStage('Securing on-chain...');
                 setUploadProgress(30);
                 await submitFileToChain(commitments, mediaFile, uniqueBlobName);
 
+                // Step C: Upload to Shelby RCP
                 setUploadStage('Syncing to Shelby...');
                 setUploadProgress(60);
                 await uploadFileToRcp(mediaFile, uniqueBlobName);
@@ -125,7 +148,7 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
                 fileId = `${account.address.toString()}/${uniqueBlobName}`;
             }
 
-            // --- SAVE METADATA (Common for both cases) ---
+            // --- SAVE METADATA TO BACKEND ---
             setUploadStage('Finalizing post...');
             setUploadProgress(90);
 
@@ -142,20 +165,20 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
 
             if (!saveResponse.ok) throw new Error('Failed to save post');
 
-            // --- SUCCESS HANDLING ---
+            // --- SUCCESS: Reset State & Update UI ---
             setUploadProgress(100);
             setUploadStage('Success!');
 
-            // Reset Composer state
             if (mediaPreviewUrl) URL.revokeObjectURL(mediaPreviewUrl);
             setMediaFile(null);
             setMediaPreviewUrl(null);
             setInputText('');
             if (fileInputRef.current) fileInputRef.current.value = '';
 
-            // Instant UI update: Add new post to the top of the feed
             const responseJson = await saveResponse.json();
             let newPost = responseJson.post;
+
+            // Optimistic Update: Add to Redux feed immediately
             if (newPost) {
                 if (!newPost.user && currentUser.username) {
                     newPost = {
@@ -182,11 +205,7 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
         } catch (error) {
             console.error('Post error:', error);
             toast.error("Something went wrong, please try again!", {
-                style: {
-                    background: '#EF4444',
-                    color: '#fff',
-                    borderRadius: '8px',
-                },
+                style: { background: '#EF4444', color: '#fff', borderRadius: '8px' },
                 duration: 4000,
             });
         } finally {
