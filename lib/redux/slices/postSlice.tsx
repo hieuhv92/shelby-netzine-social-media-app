@@ -27,7 +27,11 @@ export interface Post {
         avatar_url: string;
     };
     shelby_file_url?: string;
-    comments?: Comment[]; // Fix: Property 'comments' now exists on Post
+    file_type?: 'image' | 'video',
+    shelby_file_id?: string,
+    created_at?: string,
+    updated_at?: string,
+    comments?: Comment[];
 }
 
 interface PostState {

@@ -7,7 +7,7 @@ import { ArrowUpTrayIcon, ChartBarIcon, ChatBubbleOvalLeftEllipsisIcon } from "@
 import LikeButton from '../ui/LikeButton';
 
 interface PostProps {
-    post: Post,
+    post: any,
     id: string
 }
 
@@ -17,7 +17,7 @@ export default function PostCard({ post, id }: PostProps) {
 
     return (
         <div className="border-b border-gray-100">
-            <Link href={'/post/' + id}>
+            <Link href={`/post/${id}`}>
                 <PostContent
                     username={user?.username}
                     caption={post?.caption}

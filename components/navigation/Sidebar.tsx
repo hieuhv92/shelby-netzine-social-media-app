@@ -22,7 +22,7 @@ import {
 
 export default function Sidebar() {
     const [showMore, setShowMore] = useState(false);
-    const moreMenuRef = useRef(null);
+    const moreMenuRef = useRef<HTMLDivElement>(null);
     const { account } = useWallet();
     const dispatch = useDispatch();
 
@@ -88,16 +88,12 @@ export default function Sidebar() {
                         {showMore && (
                             <div className="absolute bottom-full left-0 mb-3 w-56 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
                                 <div className="flex flex-col py-2">
-
-                                    {/* Item 1: Settings (Ví dụ link bình thường) */}
                                     <Link href="#" onClick={() => setShowMore(false)}>
                                         <div className="px-4 py-3 flex items-center space-x-3 hover:bg-gray-100 transition duration-200 cursor-pointer">
                                             <Cog6ToothIcon className="w-5 h-5 text-gray-700" />
                                             <span className="text-[15px] font-medium text-gray-900">Settings</span>
                                         </div>
                                     </Link>
-
-                                    {/* Item 2: Help Center */}
                                     <Link href="#" onClick={() => setShowMore(false)}>
                                         <div className="px-4 py-3 flex items-center space-x-3 hover:bg-gray-100 transition duration-200 cursor-pointer">
                                             <QuestionMarkCircleIcon className="w-5 h-5 text-gray-700" />
@@ -107,7 +103,6 @@ export default function Sidebar() {
 
                                     <div className="border-t border-gray-100 my-1"></div>
 
-                                    {/* Item 3: Display/Dark Mode (Ví dụ) */}
                                     <div className="px-4 py-3 flex items-center space-x-3 hover:bg-gray-100 transition duration-200 cursor-pointer">
                                         <PaintBrushIcon className="w-5 h-5 text-gray-700" />
                                         <span className="text-[15px] font-medium text-gray-900">Display</span>
@@ -168,11 +163,9 @@ export default function Sidebar() {
 
 interface SidebarLinkProps {
     text: string,
-    Icon: React.ForwardRefExoticComponent<Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
-        title?: string;
-        titleId?: string;
-    } & React.RefAttributes<SVGSVGElement>>,
+    Icon: React.ForwardRefExoticComponent<any>;
     className?: string;
+    active?: boolean;
 }
 
 function SidebarLink({ text, Icon, className }: SidebarLinkProps) {

@@ -2,12 +2,24 @@ import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { getSession } from '@/lib/auth'
 
+// Define interfaces for database entities
+interface Post {
+  id: string;
+  user_id: string;
+  created_at: string;
+  [key: string]: any; // Allows for joined user data and dynamic fields
+}
+
+interface RelationEntry {
+  post_id: string;
+}
+
 export async function GET() {
   try {
     const session = await getSession()
     const currentUserId = session?.userId
 
-    // Fetch posts with user info, likes count, and comments count
+    // Fetch posts with related user information
     const { data: posts, error } = await supabase
       .from('posts')
       .select(`
@@ -31,47 +43,50 @@ export async function GET() {
       )
     }
 
-    // Fetch likes and comments counts for all posts
-    const postIds = posts?.map(p => p.id) || []
-    
+    // Safely type the fetched posts and extract IDs
+    const typedPosts = posts as Post[] | null
+    const postIds = typedPosts?.map((p: Post) => p.id) || []
+
+    // Batch fetch likes and comments to avoid N+1 query problems
     const [likesData, commentsData, userLikesData] = await Promise.all([
-      // Get likes count for each post
       supabase
         .from('likes')
         .select('post_id')
         .in('post_id', postIds),
-      
-      // Get comments count for each post
+
       supabase
         .from('comments')
         .select('post_id')
         .in('post_id', postIds),
-      
-      // Get current user's likes if authenticated
+
       currentUserId
         ? supabase
-            .from('likes')
-            .select('post_id')
-            .eq('user_id', currentUserId)
-            .in('post_id', postIds)
+          .from('likes')
+          .select('post_id')
+          .eq('user_id', currentUserId)
+          .in('post_id', postIds)
         : Promise.resolve({ data: [] })
     ])
 
-    // Count likes and comments per post
+    // Initialize lookup tables for counts and user interactions
     const likesCount: Record<string, number> = {}
     const commentsCount: Record<string, number> = {}
-    const userLikes = new Set(userLikesData.data?.map(l => l.post_id) || [])
+    const userLikes = new Set((userLikesData.data as RelationEntry[] | null)?.map(l => l.post_id) || []);
 
-    likesData.data?.forEach(like => {
-      likesCount[like.post_id] = (likesCount[like.post_id] || 0) + 1
-    })
+    // Aggregate counts for likes
+    const likesArray = (likesData.data as RelationEntry[]) || [];
 
-    commentsData.data?.forEach(comment => {
+    likesArray.forEach((like: RelationEntry) => {
+      likesCount[like.post_id] = (likesCount[like.post_id] || 0) + 1;
+    });
+
+    // Aggregate counts for comments
+    (commentsData.data as RelationEntry[] | null)?.forEach((comment: RelationEntry) => {
       commentsCount[comment.post_id] = (commentsCount[comment.post_id] || 0) + 1
     })
 
-    // Enrich posts with counts and is_liked status
-    const enrichedPosts = posts?.map(post => ({
+    // Map through posts to inject counters and interaction status
+    const enrichedPosts = typedPosts?.map(post => ({
       ...post,
       likes_count: likesCount[post.id] || 0,
       comments_count: commentsCount[post.id] || 0,

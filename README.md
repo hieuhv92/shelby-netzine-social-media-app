@@ -68,6 +68,8 @@ Netzin/
 │   └── providers/              # Context Providers
 │       ├── WalletProvider.tsx  # Blockchain/Wallet connection
 │       └── ToasterProvider.tsx # Notification system
+└── context/                    # Database configurations
+    └── AuthProvider.tsx        # Auth Provider
 ├── lib/                        # Infrastructure, Utilities & Logic
 │   ├── shelby.ts               # Shelby Protocol client setup
 │   ├── supabase.ts             # Supabase client (Server & Client)

@@ -15,7 +15,6 @@ export default function SignUpPrompt() {
     const { connected, account } = useWallet();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const router = useRouter();
-    const name = useSelector((state: RootState) => state.user.name);
 
     useEffect(() => {
         const handleLogin = async () => {
