@@ -22,9 +22,9 @@ export default function MainLayout({
         </div>
 
         {/* Column 3: Widgets */}
-        <div className="hidden lg:inline ml-8 flex-grow max-w-[350px]">
+        <aside className="hidden lg:block w-[400px]">
           <Widgets />
-        </div>
+        </aside>
       </main >
 
       {/* Modals Section */}

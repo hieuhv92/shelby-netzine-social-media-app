@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Widgets() {
     return (
-        <div className="p-3 hidden lg:flex flex-col space-y-4 w-[400px] pl-10 sticky top-0 h-screen overflow-y-auto scrollbar-hide">
+        <div className="p-3 hidden lg:flex flex-col space-y-4 w-[400px] pl-10 sticky top-0 max-h-screen overflow-y-auto no-scrollbar pb-10">
 
             {/* 1. Search input */}
             <div className="sticky top-0 bg-white py-2 z-20">
