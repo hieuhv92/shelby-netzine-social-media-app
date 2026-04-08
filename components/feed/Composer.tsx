@@ -285,59 +285,112 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
                     onChange={handleFileChange}
                 />
                 <textarea
-                    className="resize-none outline-none w-full min-h-[50px] text-lg"
-                    placeholder={type === 'post' ? "What's happening?" : "Post your reply"}
+                    className={`resize-none outline-none w-full min-h-[50px] text-lg transition-all duration-300 ${type === 'post' && mediaPreviewUrl && !inputText.trim()
+                        ? 'placeholder:text-[#F4AF01]/70'
+                        : ''
+                        }`}
+                    placeholder={
+                        type === 'post'
+                            ? (mediaPreviewUrl && !inputText.trim() ? "Write a caption for your media..." : "What's happening?")
+                            : "Post your reply"
+                    }
                     onChange={(e) => setInputText(e.target.value)}
                     value={inputText}
                 />
 
                 {/* Media Preview Area */}
                 {mediaPreviewUrl && (
-                    <div className="relative mt-3 mb-2">
+                    <div className="relative mt-3 mb-2 group">
+                        {/* Remove Media Button - Positioned Top Right for better UX */}
                         <div
                             onClick={handleRemoveMedia}
-                            className="absolute top-2 left-2 z-10 cursor-pointer bg-gray-900/75 hover:bg-gray-800/90 p-1.5 rounded-full transition-colors"
+                            className="absolute top-2 right-2 z-10 cursor-pointer bg-gray-900/60 hover:bg-gray-800/80 p-1.5 rounded-full transition-all backdrop-blur-sm shadow-md"
+                            title="Remove media"
                         >
                             <XMarkIcon className="w-5 h-5 text-white" strokeWidth={2.5} />
                         </div>
 
-                        <div className="rounded-2xl overflow-hidden border border-gray-200">
+                        {/* Media Container with consistent styling */}
+                        <div className="rounded-2xl overflow-hidden border border-gray-100 bg-gray-50 flex justify-center">
                             {mediaFile?.type.startsWith('image/') ? (
                                 <img
                                     src={mediaPreviewUrl}
-                                    alt="Preview"
-                                    className="w-full h-auto object-cover max-h-[400px]"
+                                    alt="Selected content preview"
+                                    className="w-full h-auto object-cover max-h-[450px] transition-opacity duration-300"
                                 />
                             ) : (
                                 <video
                                     src={mediaPreviewUrl}
                                     controls
-                                    className="w-full h-auto max-h-[400px]"
+                                    className="w-full h-auto max-h-[450px] rounded-2xl"
                                 />
                             )}
                         </div>
                     </div>
                 )}
 
-                <div className="flex justify-between pt-5 border-t border-gray-100 pb-3">
+                <div className="flex justify-between items-center pt-5 border-t border-gray-100 pb-3">
                     {type === 'post' && (
-                        <div className="flex space-x-1.5">
-                            <PhotoIcon className="w-[22px] h-[22px] text-[#F4AF01]" onClick={handleIconClick} />
-                            <ChartBarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-                            <FaceSmileIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-                            <CalendarIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
-                            <MapPinIcon className="w-[22px] h-[22px] text-[#F4AF01]" />
+                        <div className="flex items-center space-x-3">
+                            {/* Photo Upload Button with "Hint" animation when text is present but media is missing */}
+                            <div
+                                className={`p-2 rounded-full transition-all cursor-pointer group 
+                ${inputText.trim() && !mediaPreviewUrl
+                                        ? 'bg-orange-100 animate-pulse ring-2 ring-orange-200'
+                                        : 'hover:bg-orange-50'}`}
+                                onClick={handleIconClick}
+                            >
+                                <PhotoIcon
+                                    className={`w-[22px] h-[22px] text-[#F4AF01] transition-transform 
+                    ${inputText.trim() && !mediaPreviewUrl ? 'scale-110' : 'group-hover:scale-110'}`}
+                                />
+                            </div>
+
+                            {/* Placeholder icons */}
+                            <div className="flex space-x-1.5 opacity-30 grayscale cursor-not-allowed">
+                                <ChartBarIcon className="w-[22px] h-[22px] text-gray-500" />
+                                <FaceSmileIcon className="w-[22px] h-[22px] text-gray-500" />
+                                <CalendarIcon className="w-[22px] h-[22px] text-gray-500" />
+                                <MapPinIcon className="w-[22px] h-[22px] text-gray-500" />
+                            </div>
                         </div>
                     )}
 
-                    <button
-                        onClick={(event) => (type === 'post') ? sendPost() : sendComment(event)}
-                        disabled={isUploading || !inputText}
-                        className=" bg-[#F4AF01] text-white w-[80px] h-[36px] 
-                        rounded-full text-sm disabled:opacity-60 transition-all font-medium tracking-wide"
-                    >
-                        {type === 'post' ? 'POST' : 'Reply'}
-                    </button>
+                    <div className="flex flex-col items-end">
+                        {/* Dynamic Hint Message for Post Type */}
+                        {type === 'post' && (
+                            <div className="h-5 mb-1 pr-2"> {/* Fixed height to prevent layout jumping */}
+                                {inputText.trim() && !mediaPreviewUrl && (
+                                    <span className="text-[10px] text-[#F4AF01] font-semibold animate-pulse">
+                                        Please add a photo or video!
+                                    </span>
+                                )}
+                                {!inputText.trim() && mediaPreviewUrl && (
+                                    <span className="text-[10px] text-[#F4AF01] font-semibold animate-pulse">
+                                        Write a caption to post!
+                                    </span>
+                                )}
+                            </div>
+                        )}
+
+                        <button
+                            onClick={(event) => (type === 'post' ? sendPost() : sendComment(event))}
+                            disabled={
+                                isUploading ||
+                                (type === 'comment'
+                                    ? !inputText.trim()
+                                    : (!inputText.trim() || !mediaPreviewUrl))
+                            }
+                            className={`bg-[#F4AF01] text-white px-6 h-[36px] rounded-full text-sm
+               transition-all font-bold tracking-wide active:scale-95 shadow-sm
+               ${(isUploading || (type === 'post' ? (!inputText.trim() || !mediaPreviewUrl) : !inputText.trim()))
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : 'opacity-100 cursor-pointer hover:bg-[#e0a100]' // Added cursor-pointer and hover state
+                                }`}
+                        >
+                            {isUploading ? "Sending..." : (type === 'post' ? 'POST' : 'Reply')}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Upload Progress Area */}
