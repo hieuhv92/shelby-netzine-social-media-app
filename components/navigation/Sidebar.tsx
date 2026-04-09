@@ -29,7 +29,6 @@ export default function Sidebar() {
     const { account } = useWallet();
     const dispatch = useDispatch();
     const { userId, address, isAuthenticated } = useSelector((state: RootState) => state.user);
-    const profileHref = (isAuthenticated && userId) ? `/profile/${userId}` : "#";
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -84,18 +83,18 @@ export default function Sidebar() {
                     </Link>
 
                     {/* Profile Link */}
-                    <Link
-                        href={profileHref}
-                        className={`block w-fit ${!isAuthenticated ? "opacity-50 cursor-not-allowed" : ""}`}
-                        onClick={(e) => {
-                            if (!isAuthenticated) {
-                                e.preventDefault();
-                                alert("Please connect your wallet!");
-                            }
-                        }}
-                    >
-                        <SidebarLink text="Profile" Icon={UserIcon} />
-                    </Link>
+                    {!isAuthenticated ? (
+                        <div
+                            className="opacity-50 cursor-not-allowed w-fit"
+                            onClick={() => alert("Please connect your wallet!")}
+                        >
+                            <SidebarLink text="Profile" Icon={UserIcon} />
+                        </div>
+                    ) : (
+                        <Link href={`/profile/${userId}`} className="block w-fit">
+                            <SidebarLink text="Profile" Icon={UserIcon} />
+                        </Link>
+                    )}
 
                     {/* More Link with Click Action */}
                     <div className="relative" ref={moreMenuRef}>
