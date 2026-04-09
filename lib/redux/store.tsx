@@ -2,12 +2,15 @@ import { configureStore } from '@reduxjs/toolkit'
 import modalSlice from './slices/modalSlice';
 import userSlice from './slices/userSlice';
 import postSlice from './slices/postSlice';
+import profileSlice from './slices/profileSlice';
+
 
 export const store = configureStore({
     reducer: {
         modals: modalSlice,
         user: userSlice,
-        post: postSlice
+        post: postSlice,
+        profile: profileSlice
     },
 })
 

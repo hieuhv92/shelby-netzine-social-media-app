@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import Link from 'next/link';
 import { openPostModal } from "@/lib/redux/slices/modalSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
     HomeIcon,
     HashtagIcon,
@@ -16,15 +17,19 @@ import {
     PaintBrushIcon,
     QuestionMarkCircleIcon,
     CurrencyDollarIcon,
-    PlusIcon
+    PlusIcon,
+    UserIcon
 }
     from "@heroicons/react/24/outline";
+import { RootState } from "@/lib/redux/store";
 
 export default function Sidebar() {
     const [showMore, setShowMore] = useState(false);
     const moreMenuRef = useRef<HTMLDivElement>(null);
     const { account } = useWallet();
     const dispatch = useDispatch();
+    const { userId, address, isAuthenticated } = useSelector((state: RootState) => state.user);
+    const profileHref = (isAuthenticated && userId) ? `/profile/${userId}` : "#";
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -76,6 +81,20 @@ export default function Sidebar() {
                             Icon={BellIcon}
                         // active={false}
                         />
+                    </Link>
+
+                    {/* Profile Link */}
+                    <Link
+                        href={profileHref}
+                        className={`block w-fit ${!isAuthenticated ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={(e) => {
+                            if (!isAuthenticated) {
+                                e.preventDefault();
+                                alert("Please connect your wallet!");
+                            }
+                        }}
+                    >
+                        <SidebarLink text="Profile" Icon={UserIcon} />
                     </Link>
 
                     {/* More Link with Click Action */}

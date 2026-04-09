@@ -36,6 +36,20 @@ export function formatDate(date: string | Date): string {
   return d.toLocaleDateString()
 }
 
+export function formatJoinDate(dateString: string | Date): string {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+
+  // Create a formatter for "Month Year" pattern
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric',
+  });
+
+  return `Joined ${formatter.format(date)}`;
+};
+
 export function truncateAddress(address: string, length: number = 6): string {
   if (address.length <= length * 2) return address
   return `${address.slice(0, length)}...${address.slice(-length)}`

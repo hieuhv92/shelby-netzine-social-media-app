@@ -15,6 +15,7 @@ export default function HeaderInfo() {
     const user = useSelector((state: RootState) => state.user);
     const { account } = useWallet();
     const walletSelectorRef = useRef<HTMLDivElement>(null);
+    const { viewingUser } = useSelector((state: any) => state.profile);
 
     /**
      * TRIGGER WALLET SELECTOR:
@@ -36,26 +37,38 @@ export default function HeaderInfo() {
      */
     const renderHeaderLeft = () => {
         const isPostDetail = pathname.startsWith('/post');
+        const isProfileDetail = pathname.startsWith('/profile');
 
-        if (isPostDetail) {
+        // 1. Case: Post Detail or Profile Page
+        // Both require a Back button and a dynamic title
+        if (isPostDetail || isProfileDetail) {
             return (
                 <div className="flex items-center">
                     <button
                         onClick={() => router.back()}
-                        className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer mr-2"
+                        className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer mr-6"
                     >
                         <ArrowLeftIcon className="w-5 h-5 text-[#0F1419]" />
                     </button>
-                    <h2 className="text-xl font-bold text-[#0F1419]">Post</h2>
+                    <div className="flex flex-col">
+                        <h2 className="text-xl font-bold text-[#0F1419] leading-tight">
+                            {isPostDetail ? "Post" : (viewingUser?.user?.display_name || "Profile")}
+                        </h2>
+                        {isProfileDetail && viewingUser && (
+                            <p className="text-[13px] text-gray-500 font-normal">
+                                {viewingUser?.postCount || 0} Posts
+                            </p>
+                        )}
+                    </div>
                 </div>
             );
         }
 
-        // Standard Titles Mapping
+        // 2. Case: Standard Static Pages
         const titles: Record<string, string> = {
             '/': 'Home',
             '/notifications': 'Notifications',
-            '/profile': 'Profile',
+            '/explore': 'Explore',
         };
 
         return (

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
     address: string | null;
+    userId: string | null;
     username: string | null;
     display_name: string | null;
     avatar_url: string | null;
@@ -12,6 +13,7 @@ interface UserState {
 
 const initialState: UserState = {
     address: null,
+    userId: null,
     username: null,
     display_name: null,
     avatar_url: null,
@@ -26,6 +28,7 @@ export const userSlice = createSlice({
     reducers: {
         // Action when login or connect wallet
         signInSuccess: (state, action) => {
+            state.userId = action.payload.userId;
             state.address = action.payload.address;
             state.username = action.payload.username;
             state.display_name = action.payload.display_name;

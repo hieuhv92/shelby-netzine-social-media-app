@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 interface ModalState {
     commentModalOpen: boolean;
     commentPostDetails: any;
-    postModalOpen: boolean; // Thêm dòng này
+    postModalOpen: boolean;
+    editProfileModalOpen: boolean;
 }
 
 const initialState = {
@@ -18,7 +19,8 @@ const initialState = {
         shelbyFileUrl: "",
         postId: ""
     },
-    postModalOpen: false
+    postModalOpen: false,
+    editProfileModalOpen: false,
 }
 
 const modalSlice = createSlice({
@@ -57,6 +59,12 @@ const modalSlice = createSlice({
         closePostModal: (state) => {
             state.postModalOpen = false;
         },
+        openEditProfileModal: (state) => {
+            state.editProfileModalOpen = true;
+        },
+        closeEditProfileModal: (state) => {
+            state.editProfileModalOpen = false;
+        },
     }
 });
 
@@ -69,7 +77,9 @@ export const {
     closeCommentModal,
     setCommentDetails,
     openPostModal,
-    closePostModal
+    closePostModal,
+    openEditProfileModal,
+    closeEditProfileModal
 } = modalSlice.actions
 
 export default modalSlice.reducer

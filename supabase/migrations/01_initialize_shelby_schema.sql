@@ -8,7 +8,10 @@ CREATE TABLE users (
   username TEXT UNIQUE,
   display_name TEXT,
   avatar_url TEXT,
+  banner_url TEXT,
   bio TEXT,
+  location TEXT,
+  website TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

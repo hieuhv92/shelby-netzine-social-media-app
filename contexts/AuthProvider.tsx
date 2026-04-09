@@ -35,9 +35,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                         const data = await response.json();
                         dispatch(signInSuccess({
                             address: walletAddress,
-                            username: data.user?.username,
-                            display_name: data.user?.display_name,
-                            avatar_url: data.user?.avatar_url
+                            username: data?.user?.username,
+                            display_name: data?.user?.display_name,
+                            avatar_url: data?.user?.avatar_url,
+                            userId: data?.user?.id
                         }));
                     }
                 } catch (error) {

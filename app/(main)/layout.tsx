@@ -3,6 +3,7 @@ import HeaderInfo from "@/components/navigation/HeaderInfo";
 import Widgets from "@/components/navigation/Widgets";
 import CommentModal from "@/components/ui/modals/CommentModal";
 import PostModal from "@/components/ui/modals/PostModal";
+import EditProfileModal from "@/components/ui/modals/EditProfileModal";
 
 export default function MainLayout({
   children,
@@ -30,6 +31,7 @@ export default function MainLayout({
       {/* Modals Section */}
       < CommentModal />
       <PostModal />
+      <EditProfileModal />
     </div >
   );
 }

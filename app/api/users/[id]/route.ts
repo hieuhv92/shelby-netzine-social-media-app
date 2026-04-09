@@ -47,3 +47,43 @@ export async function GET(
     )
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+
+    // Mapping only the fields that exist in your database
+    const { data: updatedUser, error } = await supabase
+      .from('users')
+      .update({
+        display_name: body.display_name,
+        bio: body.bio,
+        location: body.location, // Ensure you've run the ALTER TABLE command
+        website: body.website,   // Ensure you've run the ALTER TABLE command
+        avatar_url: body.avatar_url,
+        banner_url: body.banner_url, // Ensure you've run the ALTER TABLE command
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Supabase update error:', error);
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    return NextResponse.json({
+      user: updatedUser,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
