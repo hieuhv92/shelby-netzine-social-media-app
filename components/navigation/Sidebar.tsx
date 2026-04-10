@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
     HomeIcon,
-    HashtagIcon,
     BellIcon,
     EllipsisHorizontalCircleIcon,
     SparklesIcon,
@@ -18,7 +17,8 @@ import {
     QuestionMarkCircleIcon,
     CurrencyDollarIcon,
     PlusIcon,
-    UserIcon
+    UserIcon,
+    MagnifyingGlassIcon
 }
     from "@heroicons/react/24/outline";
 import { RootState } from "@/lib/redux/store";
@@ -70,7 +70,8 @@ export default function Sidebar() {
                     <Link href="#" className="block w-fit cursor-default">
                         <SidebarLink
                             text="Explore"
-                            Icon={HashtagIcon}
+                            Icon={MagnifyingGlassIcon}
+                            disabled={true}
                         // active={false}
                         />
                     </Link>
@@ -78,6 +79,7 @@ export default function Sidebar() {
                         <SidebarLink
                             text="Notifications"
                             Icon={BellIcon}
+                            disabled={true}
                         // active={false}
                         />
                     </Link>
@@ -98,8 +100,13 @@ export default function Sidebar() {
 
                     {/* More Link with Click Action */}
                     <div className="relative" ref={moreMenuRef}>
-                        <div onClick={() => setShowMore(!showMore)} className="cursor-pointer">
-                            <SidebarLink text="More" Icon={EllipsisHorizontalCircleIcon} />
+                        {/* <div onClick={() => setShowMore(!showMore)} className="cursor-pointer"> */}
+                        <div>
+                            <SidebarLink
+                                text="More"
+                                Icon={EllipsisHorizontalCircleIcon}
+                                disabled={true}
+                            />
                         </div>
 
                         {/* Tooltip / Dropdown Menu */}
@@ -184,14 +191,33 @@ interface SidebarLinkProps {
     Icon: React.ForwardRefExoticComponent<any>;
     className?: string;
     active?: boolean;
+    disabled?: boolean;
 }
 
-function SidebarLink({ text, Icon, className }: SidebarLinkProps) {
+function SidebarLink({ text, Icon, className, disabled }: SidebarLinkProps) {
     return (
-        <li className={`flex items-center text-xl mb-2 space-x-3 p-2.5 rounded-full hover:bg-gray-200 hover:bg-opacity-30 transition duration-200 ease-out cursor-pointer group w-fit ${className || ""}`}>
+        <li
+            className={`
+                relative flex items-center text-xl mb-2 space-x-3 p-2.5 rounded-full transition duration-200 ease-out w-fit group
+                ${disabled
+                    ? "opacity-40" // Dimmed effect + restricted cursor
+                    : "hover:bg-gray-200 hover:bg-opacity-30 cursor-pointer"
+                }
+                ${className || ""}
+            `}
+            // Native browser tooltip
+            title={disabled ? "Coming Soon" : ""}
+        >
             <Icon className="h-7" />
             <span className="hidden xl:block">{text}</span>
-        </li >
+
+            {/* Custom Tailwind Tooltip */}
+            {disabled && (
+                <div className="absolute left-full ml-4 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 shadow-md">
+                    Coming Soon
+                </div>
+            )}
+        </li>
     )
 }
 

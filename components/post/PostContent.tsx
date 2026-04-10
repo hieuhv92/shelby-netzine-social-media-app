@@ -9,16 +9,17 @@ interface PostContentProps {
     replyTo?: string,
     fileType?: string,
     shelbyFileUrl?: string,
+    avatarUrl?: string,
     detailAspectRatio?: number,
     insideModal?: boolean,
-    isPostDetail?: boolean
+    isPostDetail?: boolean,
 }
 
-export default function PostContent({ username, caption, timestamp, replyTo, fileType, shelbyFileUrl, insideModal, isPostDetail }: PostContentProps) {
+export default function PostContent({ username, caption, timestamp, replyTo, fileType, shelbyFileUrl, avatarUrl, insideModal, isPostDetail }: PostContentProps) {
     return (
         <div className="flex p-3 space-x-5">
             <Image
-                src="/assets/no_avatar.jpg"
+                src={avatarUrl || '/assets/no_avatar.jpg'}
                 width={44}
                 height={44}
                 alt="profile input"

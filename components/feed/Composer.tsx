@@ -267,13 +267,11 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
 
     return (
         <div className={`flex space-x-5 p-3 ${insideModal ? 'border-none' : 'border-b border-gray-100'}`}>
-            <div>
-                <Image
-                    src={"/assets/avatar.jpg"}
-                    width={44} height={44}
-                    alt="profile input"
-                    className="w-11 h-11 rounded-full z-10 bg-white" />
-            </div>
+            <Image
+                src={currentUser?.avatar_url || "/assets/no_avatar.jpg"}
+                width={44} height={44}
+                alt="profile input"
+                className="w-11 h-11 rounded-full z-10 bg-white" />
 
             <div className="w-full">
                 {/* Hidden file input */}

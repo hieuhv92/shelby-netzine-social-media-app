@@ -24,6 +24,7 @@ export default function PostCard({ post, id }: PostProps) {
                     timestamp={post?.created_at}
                     fileType={post?.file_type}
                     shelbyFileUrl={post?.shelby_file_url}
+                    avatarUrl={user?.avatar_url}
                 />
             </Link>
 
