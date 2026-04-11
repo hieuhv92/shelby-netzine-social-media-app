@@ -15,7 +15,7 @@ export default function HeaderInfo() {
     const user = useSelector((state: RootState) => state.user);
     const { account } = useWallet();
     const walletSelectorRef = useRef<HTMLDivElement>(null);
-    const { viewingUser } = useSelector((state: any) => state.profile);
+    const { viewingUser, posts } = useSelector((state: any) => state.profile);
 
     /**
      * TRIGGER WALLET SELECTOR:
@@ -56,7 +56,7 @@ export default function HeaderInfo() {
                         </h2>
                         {isProfileDetail && viewingUser && (
                             <p className="text-[13px] text-gray-500 font-normal">
-                                {viewingUser?.postCount || 0} Posts
+                                {posts?.length || 0} {posts?.length === 1 ? 'Post' : 'Posts'}
                             </p>
                         )}
                     </div>

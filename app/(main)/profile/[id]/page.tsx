@@ -6,37 +6,42 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { setProfileError, setProfileLoading, setProfileUser } from "@/lib/redux/slices/profileSlice";
+import { setProfileError, setProfileLoading, setProfilePosts, setProfileUser } from "@/lib/redux/slices/profileSlice";
 import { formatJoinDate } from '@/lib/utils';
 import { openEditProfileModal } from "@/lib/redux/slices/modalSlice";
+import PostCard from "@/components/post/PostCard";
 
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("Posts");
     const tabs = ["Posts", "Replies", "Highlights", "Media", "Likes"];
 
-    const { viewingUser, loading, error } = useSelector((state: any) => state.profile);
+    const { viewingUser, posts, loading, error } = useSelector((state: any) => state.profile);
     const { userId: myId } = useSelector((state: any) => state.user);
 
     const params = useParams();
     const profileId = params.id;
     const dispatch = useDispatch();
 
-    const fetchUser = async () => {
+    const fetchUserAndPosts = async () => {
         try {
             dispatch(setProfileLoading(true));
             dispatch(setProfileError(false));
 
-            const response = await fetch(`/api/users/${profileId}`);
+            const [userRes, postsRes] = await Promise.all([
+                fetch(`/api/users/${profileId}`),
+                fetch(`/api/posts/user/${profileId}`)
+            ]);
 
-            if (!response.ok) {
-                throw new Error("User not found");
-            }
+            if (!userRes.ok) throw new Error("User not found");
 
-            const data = await response.json();
+            const data = await userRes.json();
+            const postsData = postsRes.ok ? await postsRes.json() : [];
+
             dispatch(setProfileUser(data));
+            dispatch(setProfilePosts(postsData));
         } catch (err) {
-            console.error(err);
+            console.error("Fetch Profile Error:", err);
             dispatch(setProfileError(true));
         } finally {
             dispatch(setProfileLoading(false));
@@ -44,12 +49,18 @@ export default function ProfilePage() {
     };
 
     useEffect(() => {
+        // Reset data when starting to fetch a new profile
         dispatch(setProfileUser(null));
+        dispatch(setProfilePosts([]));
+
         if (profileId) {
-            fetchUser();
+            fetchUserAndPosts();
         }
+
+        // Cleanup function when component unmounts or profileId changes
         return () => {
             dispatch(setProfileUser(null));
+            dispatch(setProfilePosts([]));
             dispatch(setProfileError(false));
         };
     }, [profileId, dispatch]);
@@ -193,12 +204,38 @@ export default function ProfilePage() {
             </div>
 
             {/* 7. Posts List Area */}
-            <div className="min-h-screen">
-                {/* Placeholder for actual post feed component */}
-                <div className="p-8 text-center text-gray-500">
-                    <p className="text-xl font-bold text-gray-900 mb-1">Welcome to your profile!</p>
-                    <p className="text-sm">Your posts and shared content will appear here.</p>
-                </div>
+            <div className="min-h-[500px]">
+                {activeTab === "Posts" && (
+                    <>
+                        {posts && posts.length > 0 ? (
+                            <div className="divide-y divide-gray-100">
+                                {posts.map((post: any) => (
+                                    <div key={post.id}>
+                                        <PostCard post={post} id={post.id} isProfileView={true} />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            // Empty state if no posts found
+                            <div className="p-12 text-center max-w-[calc(100%-40px)] mx-auto">
+                                <p className="text-3xl font-extrabold text-gray-900 mb-2">
+                                    @{viewingUser?.user?.username} hasn't posted
+                                </p>
+                                <p className="text-gray-500">
+                                    When they do, those posts will show up here.
+                                </p>
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* Placeholder for other tabs (Replies, Media, etc.) */}
+                {activeTab !== "Posts" && (
+                    <div className="p-12 text-center text-gray-500 opacity-60">
+                        <p className="text-lg font-bold">Feature coming soon</p>
+                        <p className="text-sm">We're working on the {activeTab} section!</p>
+                    </div>
+                )}
             </div>
         </div>
     );

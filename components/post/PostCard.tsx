@@ -8,15 +8,16 @@ import LikeButton from '../ui/LikeButton';
 
 interface PostProps {
     post: any,
-    id: string
+    id: string,
+    isProfileView?: boolean
 }
 
-export default function PostCard({ post, id }: PostProps) {
+export default function PostCard({ post, id, isProfileView }: PostProps) {
     const user = post.user;
     const dispatch = useDispatch();
 
     return (
-        <div className="border-b border-gray-100">
+        <div className="border-b border-gray-100 hover:bg-gray-100 transition duration-200 ease-out">
             <Link href={`/post/${id}`}>
                 <PostContent
                     username={user?.username}
@@ -28,36 +29,39 @@ export default function PostCard({ post, id }: PostProps) {
                 />
             </Link>
 
-            <div className="ml-16 p-3 flex space-x-14">
-                <div className="relative">
-                    <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-pointer
+            {
+                !isProfileView && <div className="ml-16 p-3 flex space-x-14">
+                    <div className="relative">
+                        <ChatBubbleOvalLeftEllipsisIcon className="w-[22px] h-[22px] cursor-pointer
                     hover:text-[#F4AF01] transition"
-                        onClick={() => {
-                            dispatch(setCommentDetails({
-                                displayName: user?.display_name,
-                                username: user?.username,
-                                userId: post.user_id,
-                                caption: post.caption,
-                                shelbyFileUrl: post.shelby_file_url,
-                                postId: post.id
-                            }))
-                            dispatch(openCommentModal())
-                        }}
-                    />
-                    <span className="absolute text-xs top-1 -right-3">
-                        {post?.comments_count}
-                    </span>
-                </div>
+                            onClick={() => {
+                                dispatch(setCommentDetails({
+                                    displayName: user?.display_name,
+                                    username: user?.username,
+                                    userId: post.user_id,
+                                    caption: post.caption,
+                                    shelbyFileUrl: post.shelby_file_url,
+                                    postId: post.id
+                                }))
+                                dispatch(openCommentModal())
+                            }}
+                        />
+                        <span className="absolute text-xs top-1 -right-3">
+                            {post?.comments_count}
+                        </span>
+                    </div>
 
-                <LikeButton post={post} />
+                    <LikeButton post={post} />
 
-                <div className="relative">
-                    <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed hover:text-[#F4AF01]" />
+                    <div className="relative">
+                        <ChartBarIcon className="w-[22px] h-[22px] cursor-not-allowed hover:text-[#F4AF01]" />
+                    </div>
+                    <div className="relative">
+                        <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed hover:text-[#F4AF01]" />
+                    </div>
                 </div>
-                <div className="relative">
-                    <ArrowUpTrayIcon className="w-[22px] h-[22px] cursor-not-allowed hover:text-[#F4AF01]" />
-                </div>
-            </div>
+            }
+
         </div>
     )
 }
