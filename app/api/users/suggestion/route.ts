@@ -26,7 +26,7 @@ export async function GET() {
         if (followedError) throw followedError
 
         // Create a list of IDs to exclude (already followed users + the current user themselves)
-        const followedIds = followedData?.map(f => f.following_id) || []
+        const followedIds = (followedData as { following_id: string }[] | null)?.map(f => f.following_id) || [];
         followedIds.push(currentUser.id)
 
         // 3. Fetch suggested users who are NOT in the exclusion list
