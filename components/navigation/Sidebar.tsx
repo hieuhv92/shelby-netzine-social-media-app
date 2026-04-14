@@ -28,7 +28,7 @@ export default function Sidebar() {
     const moreMenuRef = useRef<HTMLDivElement>(null);
     const { account } = useWallet();
     const dispatch = useDispatch();
-    const { userId, address, isAuthenticated } = useSelector((state: RootState) => state.user);
+    const { userId, address, isAuthenticated, username } = useSelector((state: RootState) => state.user);
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -93,7 +93,7 @@ export default function Sidebar() {
                             <SidebarLink text="Profile" Icon={UserIcon} />
                         </div>
                     ) : (
-                        <Link href={`/profile/${userId}`} className="block w-fit">
+                        <Link href={`/profile/${username}`} className="block w-fit">
                             <SidebarLink text="Profile" Icon={UserIcon} />
                         </Link>
                     )}

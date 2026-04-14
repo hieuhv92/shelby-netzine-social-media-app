@@ -38,6 +38,11 @@ export default function HeaderInfo() {
     const renderHeaderLeft = () => {
         const isPostDetail = pathname.startsWith('/post');
         const isProfileDetail = pathname.startsWith('/profile');
+        const pathParts = pathname.split('/');
+        const isConnections = pathParts.length === 4 && (pathParts[3] === 'followers' || pathParts[3] === 'following');
+        const urlUsername = pathParts[2];
+        const rawType = pathParts[3] || "";
+        const connectionType = rawType.charAt(0).toUpperCase() + rawType.slice(1);
 
         // 1. Case: Post Detail or Profile Page
         // Both require a Back button and a dynamic title
@@ -52,13 +57,13 @@ export default function HeaderInfo() {
                     </button>
                     <div className="flex flex-col">
                         <h2 className="text-xl font-bold text-[#0F1419] leading-tight">
-                            {isPostDetail ? "Post" : (viewingUser?.user?.display_name || "Profile")}
+                            {isConnections ? connectionType : (viewingUser?.user?.display_name || "Profile")}
                         </h2>
-                        {isProfileDetail && viewingUser && (
-                            <p className="text-[13px] text-gray-500 font-normal">
-                                {posts?.length || 0} {posts?.length === 1 ? 'Post' : 'Posts'}
-                            </p>
-                        )}
+                        <p className="text-[13px] text-gray-500 font-normal">
+                            {isConnections
+                                ? `@${urlUsername || ""}`
+                                : `${viewingUser?.posts?.length || 0} Posts`}
+                        </p>
                     </div>
                 </div>
             );

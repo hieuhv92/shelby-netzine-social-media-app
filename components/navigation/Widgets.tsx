@@ -165,7 +165,7 @@ export default function Widgets() {
                     users.map((user) => (
                         <div key={user.id} className="flex justify-between items-center py-3 px-1 hover:bg-[#eff1f1] transition-all cursor-pointer rounded-xl group">
                             <Link
-                                href={`/profile/${user.id}`}
+                                href={`/profile/${user.username}`}
                                 className="flex items-center space-x-3 flex-1 min-w-0"
                             >
                                 <div className="flex items-center space-x-3">

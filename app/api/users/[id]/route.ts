@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: profileId } = await params
+    const { id: identifier } = await params // identifier could be ID or Username
 
     // 1. Get current logged-in userId from Cookies
     const sessionCookie = request.cookies.get('session')
@@ -15,7 +15,6 @@ export async function GET(
     if (sessionCookie) {
       try {
         const session = JSON.parse(sessionCookie.value)
-        // Check if the session is still valid
         if (session.expiresAt > Date.now()) {
           currentUserId = session.userId
         }
@@ -24,43 +23,44 @@ export async function GET(
       }
     }
 
-    // 2. Fetch the target user's profile information
-    const { data: user, error } = await supabase
+    // 2. Resolve user - Try searching by username first, then by ID if it's a UUID
+    let user;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(identifier);
+
+    const { data: userData, error: userError } = await supabase
       .from('users')
       .select('*')
-      .eq('id', profileId)
+      .or(`username.eq."${identifier}"${isUUID ? `,id.eq."${identifier}"` : ''}`)
       .single()
 
-    if (error || !user) {
+    if (userError || !userData) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
+    user = userData;
+    const targetUserId = user.id; // This is always the UUID
 
-    // 3. Execute counts and follow check in parallel for better performance
+    // 3. Execute counts and follow check using the resolved UUID
     const [followersRes, followingRes, followCheckRes] = await Promise.all([
-      // Count followers of this profile
       supabase
         .from('follows')
         .select('*', { count: 'exact', head: true })
-        .eq('following_id', profileId),
+        .eq('following_id', targetUserId),
 
-      // Count how many people this profile is following
       supabase
         .from('follows')
         .select('*', { count: 'exact', head: true })
-        .eq('follower_id', profileId),
+        .eq('follower_id', targetUserId),
 
-      // Check if current user follows this profile (only if logged in)
       currentUserId
         ? supabase
           .from('follows')
           .select('id')
           .eq('follower_id', currentUserId)
-          .eq('following_id', profileId)
+          .eq('following_id', targetUserId)
           .maybeSingle()
         : Promise.resolve({ data: null })
     ])
 
-    // 4. Return combined data
     return NextResponse.json({
       user,
       followersCount: followersRes.count || 0,
@@ -76,6 +76,7 @@ export async function GET(
     )
   }
 }
+
 
 export async function PATCH(
   request: NextRequest,

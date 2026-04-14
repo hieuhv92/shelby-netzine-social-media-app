@@ -12,6 +12,7 @@ import PostCard from "@/components/post/PostCard";
 import FollowButton from "@/components/ui/FollowButton";
 import { RootState } from "@/lib/redux/store";
 import Image from 'next/image';
+import Link from "next/link";
 
 
 export default function ProfilePage() {
@@ -19,10 +20,11 @@ export default function ProfilePage() {
     const tabs = ["Posts", "Replies", "Highlights", "Media", "Likes"];
 
     const { viewingUser, posts, loading, error } = useSelector((state: RootState) => state.profile);
-    const { userId: myId } = useSelector((state: RootState) => state.user);
+    const { username: myUsername } = useSelector((state: RootState) => state.user);
 
     const params = useParams();
-    const profileId = params.id;
+    const profileId = "a0d968d0-7f73-4677-a77f-88b02b99e71f";
+    const username = params.username;
     const dispatch = useDispatch();
 
     const fetchUserAndPosts = async () => {
@@ -30,17 +32,22 @@ export default function ProfilePage() {
             dispatch(setProfileLoading(true));
             dispatch(setProfileError(false));
 
-            const [userRes, postsRes] = await Promise.all([
-                fetch(`/api/users/${profileId}`),
-                fetch(`/api/posts/user/${profileId}`)
-            ]);
-
+            // 1. Fetch user information by username first
+            const userRes = await fetch(`/api/users/${username}`);
             if (!userRes.ok) throw new Error("User not found");
 
-            const data = await userRes.json();
+            const userData = await userRes.json();
+            // Data structure depends on your API, usually: userData.user.id
+            const actualId = userData.user?.id || userData.id;
+
+            if (!actualId) throw new Error("Could not resolve User ID");
+
+            // 2. Now fetch posts using the ID we just received
+            const postsRes = await fetch(`/api/posts/user/${actualId}`);
             const postsData = postsRes.ok ? await postsRes.json() : [];
 
-            dispatch(setProfileUser(data));
+            // 3. Dispatch to Redux
+            dispatch(setProfileUser(userData));
             dispatch(setProfilePosts(postsData));
         } catch (err) {
             console.error("Fetch Profile Error:", err);
@@ -55,17 +62,17 @@ export default function ProfilePage() {
         dispatch(setProfileUser(null));
         dispatch(setProfilePosts([]));
 
-        if (profileId) {
+        if (username) {
             fetchUserAndPosts();
         }
 
-        // Cleanup function when component unmounts or profileId changes
+        // Cleanup function when component unmounts or username changes
         return () => {
             dispatch(setProfileUser(null));
             dispatch(setProfilePosts([]));
             dispatch(setProfileError(false));
         };
-    }, [profileId, dispatch]);
+    }, [username, dispatch]);
 
     if (loading) return <ProfileSkeleton />;
 
@@ -78,7 +85,7 @@ export default function ProfilePage() {
         );
     }
 
-    const isOwner = myId === profileId;
+    const isOwner = myUsername === username;
 
     return (
         <div className="flex flex-col">
@@ -191,12 +198,25 @@ export default function ProfilePage() {
 
                 {/* Follower Stats */}
                 <div className="flex space-x-5 mt-3 text-[15px]">
-                    <p className="hover:underline cursor-pointer">
-                        <span className="font-bold text-gray-900">{viewingUser?.followingCount || 0}</span> <span className="text-gray-500">Following</span>
-                    </p>
-                    <p className="hover:underline cursor-pointer">
-                        <span className="font-bold text-gray-900">{viewingUser?.followersCount || 0}</span> <span className="text-gray-500">Followers</span>
-                    </p>
+                    <Link
+                        href={`/profile/${viewingUser?.user.username}/following`}
+                        className="hover:underline cursor-pointer group"
+                    >
+                        <span className="font-bold text-gray-900 group-hover:text-black">
+                            {viewingUser?.followingCount || 0}
+                        </span>
+                        {" "}<span className="text-gray-500">Following</span>
+                    </Link>
+
+                    <Link
+                        href={`/profile/${viewingUser?.user.username}/followers`}
+                        className="hover:underline cursor-pointer group"
+                    >
+                        <span className="font-bold text-gray-900 group-hover:text-black">
+                            {viewingUser?.followersCount || 0}
+                        </span>
+                        {" "}<span className="text-gray-500">Followers</span>
+                    </Link>
                 </div>
             </div>
 
