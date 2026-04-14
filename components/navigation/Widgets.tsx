@@ -3,6 +3,11 @@
 import { EllipsisHorizontalCircleIcon, EllipsisHorizontalIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import FollowButton from "../ui/FollowButton";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/redux/store";
+import { updateFollowStats } from "@/lib/redux/slices/profileSlice";
 
 interface Trend {
     name: string;
@@ -10,31 +15,69 @@ interface Trend {
     tweet_volume: number | null;
 }
 
+interface User {
+    id: string;
+    username: string;
+    display_name: string;
+    avatar_url: string;
+    isFollowing?: boolean;
+}
+
 export default function Widgets() {
     const [trends, setTrends] = useState<Trend[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
+    const dispatch = useDispatch();
+    // Get the current user profile data from Redux to sync follow status
+    const viewingUser = useSelector((state: RootState) => state.profile.viewingUser);
+
+    // 1. Initial fetch
     useEffect(() => {
-        fetch("/api/trending")
-            .then((res) => {
-                if (!res.ok) throw new Error(res.status.toString());
-                return res.json();
-            })
-            .then((data) => {
-                if (Array.isArray(data)) {
-                    const filteredTrends = data.filter((t: any) => t.name);
-                    setTrends(filteredTrends.slice(0, 5));
+        const fetchWidgetData = async () => {
+            try {
+                const [resTrends, resUsers] = await Promise.all([
+                    fetch("/api/trending"),
+                    fetch("/api/users/suggestion")
+                ]);
+
+                if (!resTrends.ok || !resUsers.ok) throw new Error("Fetch failed");
+
+                const trendsData = await resTrends.json();
+                const usersData = await resUsers.json();
+
+                // 4. Set state cho Trends
+                if (Array.isArray(trendsData)) {
+                    setTrends(trendsData.filter((t: any) => t.name).slice(0, 5));
                 }
-            })
-            .catch((err) => {
-                console.error("Trending fetch error:", err);
+
+                // 5. Set state cho Suggested Users
+                setUsers(usersData);
+            } catch (err) {
+                console.error("Widget fetch error:", err);
                 setIsError(true);
-            })
-            .finally(() => {
+            } finally {
                 setIsLoading(false);
-            });
+            }
+        };
+
+        fetchWidgetData();
     }, []);
+
+    // 2. Sync Widget state when Profile state changes (Add this)
+    useEffect(() => {
+        // Only update if we have a viewingUser in Redux
+        if (viewingUser?.user?.id) {
+            setUsers(prevUsers =>
+                prevUsers.map(u =>
+                    u.id === viewingUser.user.id
+                        ? { ...u, isFollowing: viewingUser.isFollowing }
+                        : u
+                )
+            );
+        }
+    }, [viewingUser?.isFollowing, viewingUser?.user?.id]);
 
     return (
         <div className="p-3 hidden lg:flex flex-col space-y-4 w-[400px] pl-10 sticky top-0 max-h-screen overflow-y-auto no-scrollbar pb-10">
@@ -101,67 +144,61 @@ export default function Widgets() {
 
             {/* 3. Who to Follow */}
             <div className="bg-[#F7F9F9] rounded-2xl p-3">
-                <h1 className="text-xl font-bold mb-2">Who to Follow</h1>
+                <h1 className="text-xl font-bold mb-2 px-1">Who to Follow</h1>
 
-                {/* Profile to follow 1 */}
-                <div className="flex justify-between items-center py-3">
-                    <div className="flex item-center space-x-3">
-                        <Image
-                            src="/assets/avatar_12.jpg"
-                            width={56} height={56}
-                            alt="profile picture"
-                            className="w-14 h-14 rounded-full"
-                        />
-                        <div className="flex flex-col text-sm">
-                            <span className="font-bold">Alexis Wan</span>
-                            <span>@alexis_wan00102</span>
-                        </div>
+                {isLoading ? (
+                    // Loading skeleton
+                    <div className="animate-pulse space-y-4 p-2">
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="flex items-center space-x-3">
+                                <div className="rounded-full bg-gray-200 h-12 w-12"></div>
+                                <div className="flex-1 space-y-2">
+                                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
+                ) : users.length === 0 ? (
+                    <p className="text-sm text-gray-500 p-2 text-center">No suggestions.</p>
+                ) : (
+                    users.map((user) => (
+                        <div key={user.id} className="flex justify-between items-center py-3 px-1 hover:bg-[#eff1f1] transition-all cursor-pointer rounded-xl group">
+                            <Link
+                                href={`/profile/${user.id}`}
+                                className="flex items-center space-x-3 flex-1 min-w-0"
+                            >
+                                <div className="flex items-center space-x-3">
+                                    <div className="flex-shrink-0">
+                                        <Image
+                                            src={user.avatar_url || "/assets/avatar_default.jpg"}
+                                            width={48}
+                                            height={48}
+                                            alt={user.username}
+                                            className="w-12 h-12 rounded-full object-cover border border-gray-100 shadow-sm"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col text-[15px]">
+                                        <span className="font-bold hover:underline leading-5">{user.display_name}</span>
+                                        <span className="text-[#536471] text-sm">@{user.username}</span>
+                                    </div>
+                                </div>
+                            </Link>
 
-                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
-                        Follow
-                    </button>
-                </div>
-
-                {/* Profile to follow 2 */}
-                <div className="flex justify-between items-center py-3">
-                    <div className="flex item-center space-x-3">
-                        <Image
-                            src="/assets/avatar_13.jpg"
-                            width={56} height={56}
-                            alt="profile picture"
-                            className="w-14 h-14 rounded-full"
-                        />
-                        <div className="flex flex-col text-sm">
-                            <span className="font-bold">Lily Rose</span>
-                            <span>@lilyrose1012</span>
+                            <FollowButton
+                                userId={user.id}
+                                initialIsFollowing={!!user.isFollowing}
+                                onStatusChange={(newStatus) => {
+                                    setUsers(prev => prev.map(u => u.id === user.id ? { ...u, isFollowing: newStatus } : u));
+                                    const currentProfileId = viewingUser?.user?.id;
+                                    if (currentProfileId === user.id) {
+                                        dispatch(updateFollowStats(newStatus));
+                                    }
+                                }}
+                            />
                         </div>
-                    </div>
-
-                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
-                        Follow
-                    </button>
-                </div>
-
-                {/* Profile to follow 3 */}
-                <div className="flex justify-between items-center py-3">
-                    <div className="flex item-center space-x-3">
-                        <Image
-                            src="/assets/avatar_02.jpg"
-                            width={56} height={56}
-                            alt="profile picture"
-                            className="w-14 h-14 rounded-full"
-                        />
-                        <div className="flex flex-col text-sm">
-                            <span className="font-bold">Edward Brown</span>
-                            <span>@edward0809</span>
-                        </div>
-                    </div>
-
-                    <button className="bg-[#0F1419] text-white w-[72px] h-[40px] rounded-full text-sm">
-                        Follow
-                    </button>
-                </div>
+                    ))
+                )}
             </div>
 
             {/* 4. Footer links */}

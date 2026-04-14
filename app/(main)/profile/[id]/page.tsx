@@ -2,22 +2,24 @@
 
 import { NetzinLogo } from "@/components/navigation/Sidebar";
 import { ArrowLeftIcon, CalendarDaysIcon, MapPinIcon, LinkIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { setProfileError, setProfileLoading, setProfilePosts, setProfileUser } from "@/lib/redux/slices/profileSlice";
+import { setProfileError, setProfileLoading, setProfilePosts, setProfileUser, updateFollowStats } from "@/lib/redux/slices/profileSlice";
 import { formatJoinDate } from '@/lib/utils';
 import { openEditProfileModal } from "@/lib/redux/slices/modalSlice";
 import PostCard from "@/components/post/PostCard";
+import FollowButton from "@/components/ui/FollowButton";
+import { RootState } from "@/lib/redux/store";
+import Image from 'next/image';
 
 
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("Posts");
     const tabs = ["Posts", "Replies", "Highlights", "Media", "Likes"];
 
-    const { viewingUser, posts, loading, error } = useSelector((state: any) => state.profile);
-    const { userId: myId } = useSelector((state: any) => state.user);
+    const { viewingUser, posts, loading, error } = useSelector((state: RootState) => state.profile);
+    const { userId: myId } = useSelector((state: RootState) => state.user);
 
     const params = useParams();
     const profileId = params.id;
@@ -80,16 +82,19 @@ export default function ProfilePage() {
 
     return (
         <div className="flex flex-col">
-            {/* 2. Banner Section */}
+            {/* 1. Banner Section */}
             <div className="relative group">
-                {/* Banner Section */}
+                {/* Banner */}
                 <div className="h-48 bg-[#F9C84E] w-full relative overflow-hidden flex items-center justify-center">
                     {viewingUser?.user?.banner_url ? (
                         // Display actual user banner if it exists
-                        <img
+                        <Image
                             src={viewingUser.user.banner_url}
                             alt="profile banner"
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="100vw"
+                            priority
                         />
                     ) : (
                         // Fallback to your branded placeholder
@@ -105,7 +110,7 @@ export default function ProfilePage() {
                     )}
                 </div>
 
-                {/* 3. Avatar Section stays the same */}
+                {/* Avatar Section stays the same */}
                 <div className="absolute -bottom-16 left-4">
                     <div className="w-32 h-32 rounded-full border-4 border-white bg-white shadow-sm overflow-hidden">
                         {viewingUser?.user?.avatar_url ? (
@@ -116,7 +121,7 @@ export default function ProfilePage() {
                             />
                         ) : (
                             <img
-                                src={"/assets/avatar.jpg"}
+                                src={"/assets/avatar_default.jpg"}
                                 alt="user avatar"
                                 className="w-full h-full object-cover"
                             />
@@ -126,22 +131,27 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            {/* 4. Action Buttons (e.g., Edit Profile) */}
+            {/* 2. Action Buttons (e.g., Edit Profile) */}
             <div className="flex justify-end p-4 h-20">
                 {isOwner ? (
-                    <button className="px-4 py-1.5 rounded-full border border-gray-300 font-bold hover:bg-gray-100 transition duration-200 text-[15px] text-gray-900"
+                    <button
+                        className="px-4 py-1.5 rounded-full border border-gray-300 font-bold hover:bg-gray-100 transition duration-200 text-[15px] text-gray-900 h-[36px]"
                         onClick={() => dispatch(openEditProfileModal())}
                     >
                         Edit profile
                     </button>
                 ) : (
-                    <button className="px-4 py-1.5 rounded-full bg-black text-white font-bold hover:bg-gray-800 transition duration-200 text-[15px]">
-                        Follow
-                    </button>
+                    <FollowButton
+                        userId={viewingUser.user.id}
+                        initialIsFollowing={viewingUser.isFollowing}
+                        onStatusChange={(newStatus) => {
+                            dispatch(updateFollowStats(newStatus));
+                        }}
+                    />
                 )}
             </div>
 
-            {/* 5. User Info Details */}
+            {/* 3. User Info Details */}
             <div className="px-4 mt-1">
                 <div>
                     <h2 className="text-xl font-extrabold leading-tight text-gray-900">
@@ -149,26 +159,33 @@ export default function ProfilePage() {
                     </h2>
                     <p className="text-gray-500 text-[15px]">@{viewingUser?.user?.username || 'shelby_dev'}</p>
                 </div>
-
-                <p className="mt-3 text-[15px] leading-normal text-gray-900">
-                    {viewingUser?.user?.bio}
-                </p>
+                {viewingUser?.user?.bio &&
+                    <p className="mt-3 text-[15px] leading-normal text-gray-900">
+                        {viewingUser?.user?.bio}
+                    </p>
+                }
 
                 {/* Meta data: Location, Website, Join Date */}
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-gray-500 text-[15px]">
-                    <div className="flex items-center">
-                        <MapPinIcon className="w-4 h-4 mr-1" />
-                        <span>{viewingUser?.user?.location}</span>
-                    </div>
-                    <div className="flex items-center text-blue-500 hover:underline cursor-pointer">
-                        <LinkIcon className="w-4 h-4 mr-1" />
-                        <span>{viewingUser?.user?.website}</span>
-                    </div>
+                    {viewingUser?.user?.location && (
+                        <div className="flex items-center">
+                            <MapPinIcon className="w-4 h-4 mr-1" />
+                            <span>{viewingUser.user.location}</span>
+                        </div>
+                    )}
+                    {viewingUser?.user?.website && (
+                        <div className="flex items-center text-blue-500 hover:underline cursor-pointer">
+                            <LinkIcon className="w-4 h-4 mr-1" />
+                            <span>{viewingUser?.user?.website}</span>
+                        </div>
+                    )}
                     <div className="flex items-center">
                         <CalendarDaysIcon className="w-4 h-4 mr-1" />
-                        {viewingUser?.user?.created_at ? (<span>{formatJoinDate(viewingUser?.user?.created_at)}</span>) :
-                            (<span>Joined Recently</span>)
-                        }
+                        <span>
+                            {viewingUser?.user?.created_at
+                                ? formatJoinDate(viewingUser.user.created_at)
+                                : "Joined Recently"}
+                        </span>
                     </div>
                 </div>
 
@@ -183,7 +200,7 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            {/* 6. Tabs Navigation (Posts, Replies, etc.) */}
+            {/* 4. Tabs Navigation (Posts, Replies, etc.) */}
             <div className="flex border-b border-gray-100 mt-4 overflow-x-auto no-scrollbar">
                 {tabs.map((tab) => (
                     <button
@@ -203,7 +220,7 @@ export default function ProfilePage() {
                 ))}
             </div>
 
-            {/* 7. Posts List Area */}
+            {/* 5. Posts List Area */}
             <div className="min-h-[500px]">
                 {activeTab === "Posts" && (
                     <>

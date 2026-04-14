@@ -19,7 +19,7 @@ export default function PostContent({ username, caption, timestamp, replyTo, fil
     return (
         <div className="flex p-3 space-x-5">
             <Image
-                src={avatarUrl || '/assets/no_avatar.jpg'}
+                src={avatarUrl || '/assets/avatar_default.jpg'}
                 width={44}
                 height={44}
                 alt="profile input"

@@ -32,9 +32,20 @@ export const profileSlice = createSlice({
         setProfileError: (state, action: PayloadAction<boolean>) => {
             state.error = action.payload;
             state.viewingUser = null;
+        },
+        updateFollowStats: (state, action: PayloadAction<boolean>) => {
+            if (state.viewingUser && state.viewingUser.user) {
+                const isFollowing = action.payload;
+
+                state.viewingUser = {
+                    ...state.viewingUser,
+                    isFollowing: isFollowing,
+                    followersCount: (Number(state.viewingUser.followersCount) || 0) + (isFollowing ? 1 : -1)
+                };
+            }
         }
     }
 });
 
-export const { setProfileUser, setProfilePosts, setProfileLoading, setProfileError } = profileSlice.actions;
+export const { setProfileUser, setProfilePosts, setProfileLoading, setProfileError, updateFollowStats } = profileSlice.actions;
 export default profileSlice.reducer;

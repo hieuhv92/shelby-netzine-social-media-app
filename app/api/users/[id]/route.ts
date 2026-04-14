@@ -1,44 +1,73 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { NextRequest, NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params
+    const { id: profileId } = await params
 
-    // Get user
+    // 1. Get current logged-in userId from Cookies
+    const sessionCookie = request.cookies.get('session')
+    let currentUserId: string | null = null
+
+    if (sessionCookie) {
+      try {
+        const session = JSON.parse(sessionCookie.value)
+        // Check if the session is still valid
+        if (session.expiresAt > Date.now()) {
+          currentUserId = session.userId
+        }
+      } catch (e) {
+        console.error("Failed to parse session cookie")
+      }
+    }
+
+    // 2. Fetch the target user's profile information
     const { data: user, error } = await supabase
       .from('users')
       .select('*')
-      .eq('id', id)
+      .eq('id', profileId)
       .single()
 
     if (error || !user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Get followers count
-    const { count: followersCount } = await supabase
-      .from('follows')
-      .select('*', { count: 'exact', head: true })
-      .eq('following_id', id)
+    // 3. Execute counts and follow check in parallel for better performance
+    const [followersRes, followingRes, followCheckRes] = await Promise.all([
+      // Count followers of this profile
+      supabase
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('following_id', profileId),
 
-    // Get following count
-    const { count: followingCount } = await supabase
-      .from('follows')
-      .select('*', { count: 'exact', head: true })
-      .eq('follower_id', id)
+      // Count how many people this profile is following
+      supabase
+        .from('follows')
+        .select('*', { count: 'exact', head: true })
+        .eq('follower_id', profileId),
 
+      // Check if current user follows this profile (only if logged in)
+      currentUserId
+        ? supabase
+          .from('follows')
+          .select('id')
+          .eq('follower_id', currentUserId)
+          .eq('following_id', profileId)
+          .maybeSingle()
+        : Promise.resolve({ data: null })
+    ])
+
+    // 4. Return combined data
     return NextResponse.json({
       user,
-      followersCount: followersCount || 0,
-      followingCount: followingCount || 0,
+      followersCount: followersRes.count || 0,
+      followingCount: followingRes.count || 0,
+      isFollowing: !!followCheckRes.data,
     })
+
   } catch (error: any) {
     console.error('Error fetching user:', error)
     return NextResponse.json(
@@ -62,10 +91,10 @@ export async function PATCH(
       .update({
         display_name: body.display_name,
         bio: body.bio,
-        location: body.location, // Ensure you've run the ALTER TABLE command
-        website: body.website,   // Ensure you've run the ALTER TABLE command
+        location: body.location,
+        website: body.website,
         avatar_url: body.avatar_url,
-        banner_url: body.banner_url, // Ensure you've run the ALTER TABLE command
+        banner_url: body.banner_url,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
