@@ -5,6 +5,7 @@ import { closeEditProfileModal } from "@/lib/redux/slices/modalSlice";
 import { XMarkIcon, CameraIcon } from "@heroicons/react/24/outline";
 import { setProfileLoading, setProfileUser } from "@/lib/redux/slices/profileSlice";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function EditProfileModal() {
     const dispatch = useDispatch();
@@ -125,6 +126,10 @@ export default function EditProfileModal() {
                     user: updatedUser.user
                 }));
 
+                toast.success("Profile updated successfully!", {
+                    style: { background: '#F4AF01', color: '#fff' }
+                });
+
                 // 2. CLOSE THE MODAL
                 dispatch(closeEditProfileModal());
 
@@ -136,6 +141,10 @@ export default function EditProfileModal() {
                 console.error("Failed to update profile:", errorData.error);
             }
         } catch (err) {
+            toast.error("Something went wrong, please try again!", {
+                style: { background: '#EF4444', color: '#fff', borderRadius: '8px' },
+                duration: 4000,
+            });
             console.error("Save error:", err);
         }
     };
@@ -152,7 +161,7 @@ export default function EditProfileModal() {
                         </button>
                         <h2 className="text-xl font-bold text-gray-900">Edit profile</h2>
                     </div>
-                    <button onClick={handleSave} className="bg-black text-white px-4 py-1.5 rounded-full font-bold hover:bg-gray-800 transition">
+                    <button onClick={handleSave} className="bg-black text-white px-4 py-1.5 rounded-full font-bold hover:bg-gray-800 transition cursor-pointer">
                         Save
                     </button>
                 </div>

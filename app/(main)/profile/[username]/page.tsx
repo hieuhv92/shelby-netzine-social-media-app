@@ -142,13 +142,14 @@ export default function ProfilePage() {
             <div className="flex justify-end p-4 h-20">
                 {isOwner ? (
                     <button
-                        className="px-4 py-1.5 rounded-full border border-gray-300 font-bold hover:bg-gray-100 transition duration-200 text-[15px] text-gray-900 h-[36px]"
+                        className="px-4 py-1.5 rounded-full border border-gray-300 font-bold hover:bg-gray-100 transition duration-200 text-[15px] text-gray-900 h-[36px] cursor-pointer"
                         onClick={() => dispatch(openEditProfileModal())}
                     >
                         Edit profile
                     </button>
                 ) : (
                     <FollowButton
+                        className="cursor-pointer"
                         userId={viewingUser.user.id}
                         initialIsFollowing={viewingUser.isFollowing}
                         onStatusChange={(newStatus) => {
