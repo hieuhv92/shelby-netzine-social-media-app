@@ -38,6 +38,8 @@ export default function HeaderInfo() {
     const renderHeaderLeft = () => {
         const isPostDetail = pathname.startsWith('/post');
         const isProfileDetail = pathname.startsWith('/profile');
+        const isExplore = pathname.startsWith('/explore');
+        const isSearch = pathname.startsWith('/search');
         const pathParts = pathname.split('/');
         const isConnections = pathParts.length === 4 && (pathParts[3] === 'followers' || pathParts[3] === 'following');
         const urlUsername = pathParts[2];
@@ -69,11 +71,29 @@ export default function HeaderInfo() {
             );
         }
 
-        // 2. Case: Standard Static Pages
+        // 2. Case: Explore or Search
+        if (isExplore || isSearch) {
+            return (
+                <div className="flex items-center">
+                    <button
+                        onClick={() => router.back()}
+                        className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer mr-6"
+                    >
+                        <ArrowLeftIcon className="w-5 h-5 text-[#0F1419]" />
+                    </button>
+                    <div className="flex flex-col">
+                        <h2 className="text-xl font-bold text-[#0F1419] leading-tight">
+                            {isExplore ? "Explore" : "Search"}
+                        </h2>
+                    </div>
+                </div>
+            )
+        }
+
+        // 3. Case: Standard Static Pages
         const titles: Record<string, string> = {
             '/': 'Home',
             '/notifications': 'Notifications',
-            '/explore': 'Explore',
         };
 
         return (

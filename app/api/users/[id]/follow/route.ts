@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createServerClient } from '@/lib/supabase'
 import { getCurrentUser } from '@/lib/auth'
 
+/**
+ * GET: Check if the current user is following a specific user
+ */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -16,13 +19,15 @@ export async function GET(
     }
 
     const { id: followingId } = await params
+    // Use Service Role client to bypass RLS on server-side
+    const adminSupabase = createServerClient()
 
-    const { data: follow } = await supabase
+    const { data: follow } = await adminSupabase
       .from('follows')
       .select('id')
       .eq('follower_id', currentUser.id)
       .eq('following_id', followingId)
-      .single()
+      .maybeSingle() // Use maybeSingle to avoid 406 errors if no record exists
 
     return NextResponse.json({
       isFollowing: !!follow,
@@ -35,6 +40,9 @@ export async function GET(
   }
 }
 
+/**
+ * POST: Create a follow relationship
+ */
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -50,6 +58,7 @@ export async function POST(
 
     const { id: followingId } = await params
 
+    // Prevent users from following themselves
     if (currentUser.id === followingId) {
       return NextResponse.json(
         { error: 'Cannot follow yourself' },
@@ -57,20 +66,22 @@ export async function POST(
       )
     }
 
-    // Check if already following
-    const { data: existingFollow } = await supabase
+    const adminSupabase = createServerClient()
+
+    // Check if the follow relationship already exists
+    const { data: existingFollow } = await adminSupabase
       .from('follows')
       .select('id')
       .eq('follower_id', currentUser.id)
       .eq('following_id', followingId)
-      .single()
+      .maybeSingle()
 
     if (existingFollow) {
       return NextResponse.json({ success: true, isFollowing: true })
     }
 
-    // Create follow
-    const { error } = await supabase
+    // Insert new follow record using admin privileges to bypass RLS
+    const { error } = await adminSupabase
       .from('follows')
       .insert({
         follower_id: currentUser.id,
@@ -91,6 +102,9 @@ export async function POST(
   }
 }
 
+/**
+ * DELETE: Remove a follow relationship (Unfollow)
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -105,8 +119,10 @@ export async function DELETE(
     }
 
     const { id: followingId } = await params
+    const adminSupabase = createServerClient()
 
-    const { error } = await supabase
+    // Execute delete using admin client
+    const { error } = await adminSupabase
       .from('follows')
       .delete()
       .eq('follower_id', currentUser.id)

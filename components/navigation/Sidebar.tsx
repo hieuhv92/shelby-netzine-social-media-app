@@ -67,11 +67,11 @@ export default function Sidebar() {
                     <Link href="/" className="block w-fit">
                         <SidebarLink text="Home" Icon={HomeIcon} />
                     </Link>
-                    <Link href="#" className="block w-fit cursor-default">
+                    <Link href={"/explore"} className="block w-fit cursor-default">
                         <SidebarLink
                             text="Explore"
                             Icon={MagnifyingGlassIcon}
-                            disabled={true}
+                            disabled={false}
                         // active={false}
                         />
                     </Link>
