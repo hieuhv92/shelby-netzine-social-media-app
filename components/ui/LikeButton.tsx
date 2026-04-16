@@ -1,7 +1,11 @@
 import { Post, toggleLikePost } from "@/lib/redux/slices/postSlice";
+import { signOutUser } from "@/lib/redux/slices/userSlice";
+import { RootState } from "@/lib/redux/store";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 interface LikeButtonProps {
     post: Post;
@@ -12,36 +16,48 @@ interface LikeButtonProps {
 const LikeButton = ({ post, showCount = true, iconSize = "w-[22px] h-[22px]" }: LikeButtonProps) => {
     const dispatch = useDispatch();
 
+    // Get authentication state from Redux and wallet connection from hook
+    const { isAuthenticated } = useSelector((state: RootState) => state.user);
+    const { account } = useWallet();
+
     const handleLike = async (e: React.MouseEvent) => {
         e.stopPropagation();
 
-        // 1. Determine the HTTP method based on the CURRENT state in Redux
+        // 1. Validation: Block interaction if not authenticated or wallet not connected
+        // This maintains consistency with Follow and Composer logic
+        if (!isAuthenticated || !account) {
+            toast.error("Please connect your wallet to like posts!", {
+                style: { background: '#F59E0B', color: '#fff', borderRadius: '8px' },
+                duration: 4000,
+            });
+            return; // Terminate early before performing Optimistic Update
+        }
+
+        // 2. Determine HTTP method based on CURRENT Redux state
         const method = post.is_liked ? 'DELETE' : 'POST';
 
-        // 2. Optimistic Update: Immediately update UI in Redux
+        // 3. Optimistic Update: Immediately update UI in Redux for better UX
         dispatch(toggleLikePost({ postId: post.id }));
 
         try {
             const response = await fetch(`/api/posts/${post.id}/like`, {
-                method: method, // POST to like, DELETE to unlike
+                method: method,
             });
 
-            if (response.status === 401) {
-                // Rollback if user is not authenticated
-                dispatch(toggleLikePost({ postId: post.id }));
-                window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
-                return;
-            }
-
             if (!response.ok) {
+                // If session expired (401), trigger sign out to sync state
+                if (response.status === 401) {
+                    dispatch(signOutUser());
+                }
                 throw new Error("API Error");
             }
         } catch (error) {
-            // 3. Rollback UI state if network or server error occurs
+            // 4. Rollback UI state if network or server error occurs
             dispatch(toggleLikePost({ postId: post.id }));
             console.error('Error toggling like:', error);
         }
     };
+
 
     return (
         <div className="relative flex items-center">
