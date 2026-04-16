@@ -1,6 +1,6 @@
 "use client";
 
-import { NetzinLogo } from "@/components/navigation/Sidebar";
+import { NetzinLogo } from "@/components/navigation/SideNav";
 import { ArrowLeftIcon, CalendarDaysIcon, MapPinIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";

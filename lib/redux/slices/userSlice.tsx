@@ -41,8 +41,13 @@ export const userSlice = createSlice({
         // Action when logout or disconnect wallet
         signOutUser: (state) => {
             state.address = null;
+            state.userId = null;
+            state.username = null;
+            state.display_name = null;
+            state.avatar_url = null;
             state.walletName = null;
             state.isAuthenticated = false;
+            state.loading = false;
         },
 
         // Action to turn on the loading state when waiting for connect the wallet

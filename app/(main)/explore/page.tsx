@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SearchBar from "@/components/ui/SearchBar";
+import SearchBox from "@/components/ui/SearchBox";
 import TrendingList from "@/components/feed/TrendingList";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 
@@ -15,7 +15,7 @@ export default function ExplorePage() {
             <div className="sticky top-0 bg-white/80 backdrop-blur-md z-20">
                 <div className="flex items-center px-4 py-2 space-x-4">
                     <div className="flex-1">
-                        <SearchBar />
+                        <SearchBox />
                     </div>
                     <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <Cog6ToothIcon className="w-6 h-6 text-gray-700" />

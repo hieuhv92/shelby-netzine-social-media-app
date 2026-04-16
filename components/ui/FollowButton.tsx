@@ -1,6 +1,10 @@
 "use client";
 
+import { RootState } from "@/lib/redux/store";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 interface FollowButtonProps {
     userId: string;
@@ -17,6 +21,8 @@ export default function FollowButton({
 }: FollowButtonProps) {
     const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
     const [isProcessing, setIsProcessing] = useState(false);
+    const { isAuthenticated } = useSelector((state: RootState) => state.user);
+    const { account, wallet } = useWallet();
 
     // Sync state if initialIsFollowing changes (useful for dynamic lists)
     useEffect(() => {
@@ -26,6 +32,13 @@ export default function FollowButton({
     const handleFollow = async (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if (!isAuthenticated || !account || !wallet) {
+            toast("Please connect your wallet to follow users!", {
+                style: { background: '#F59E0B', color: '#fff' }
+            });
+            return;
+        }
 
         setIsProcessing(true);
         const previousStatus = isFollowing;

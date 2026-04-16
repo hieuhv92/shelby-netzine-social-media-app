@@ -30,11 +30,11 @@ Netzin/
 │   ├── layout.tsx              # Root Layout (HTML/Body, Redux, Wallet, Toast Providers)
 │   ├── globals.css             # Global Tailwind CSS styles
 │   ├── (auth)/                 # Authentication Route Group (Simple Layout)
-│   │   ├── layout.tsx          # Auth-specific Layout (e.g., Center card, no Sidebar)
+│   │   ├── layout.tsx          # Auth-specific Layout (e.g., Center card, no SideNav)
 │   │   └── login/
 │   │       └── page.tsx        # Login Page
 │   ├── (main)/                 # Main App Route Group (Shared 3-Column Layout)
-│   │   ├── layout.tsx          # Main Shell (Sidebar, Content Middle, Widgets)
+│   │   ├── layout.tsx          # Main Shell (SideNav, Content Middle, RightSidebar)
 │   │   ├── page.tsx            # Home Feed Page (Renders Composer + FeedList)
 │   │   ├── post/
 │   │   │   └── [id]/           # Post detail route
@@ -56,9 +56,9 @@ Netzin/
 │   │   ├── PostContent.tsx      # Extended view for [id] page
 │   │   └── CommentItem.tsx     # Individual comment row
 │   ├── navigation/             # Core navigation UI
-│   │   ├── Sidebar.tsx         # Fixed left-side menu
-│   │   ├── HeaderInfo.tsx      # Header information
-│   │   └── Widgets.tsx         # Sticky right-side panel (Trends/Suggestions)
+│   │   ├── SideNav.tsx         # Fixed left-side menu
+│   │   ├── MainHeader.tsx      # Header information
+│   │   └── RightSidebar.tsx    # Sticky right-side panel (Trends/Suggestions)
 │   ├── ui/                     # Generic/Atomic UI components
 │   │   ├── modals/             # App-wide modals
 │   │   │   └── CommentModal.tsx

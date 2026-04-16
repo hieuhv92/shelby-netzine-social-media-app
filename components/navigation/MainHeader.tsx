@@ -9,7 +9,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { XChainWalletSelector } from '@shelby-protocol/ui/components/x-chain-wallet-selector';
 import { WalletIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
-export default function HeaderInfo() {
+export default function MainHeader() {
     const pathname = usePathname();
     const router = useRouter();
     const user = useSelector((state: RootState) => state.user);

@@ -38,6 +38,7 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
     const router = useRouter();
     const pathname = usePathname();
     const currentUser = useSelector((state: RootState) => state.user);
+    const { isAuthenticated } = useSelector((state: RootState) => state.user);
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
@@ -91,7 +92,7 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
         }
 
         // 2. Validation: Ensure Wallet Connection
-        if (!account || !wallet) {
+        if (!isAuthenticated || !account || !wallet) {
             toast.error("Please connect your wallet to continue!", {
                 style: { background: '#EF4444', color: '#fff', borderRadius: '8px' },
                 duration: 4000,
@@ -144,8 +145,8 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
                 await uploadFileToRcp(mediaFile, uniqueBlobName);
 
                 const shelbyApiUrl = process.env.NEXT_PUBLIC_SHELBY_API_URL || 'https://api.shelbynet.shelby.xyz';
-                fileUrl = `${shelbyApiUrl}/shelby/v1/blobs/${account.address.toString()}/${encodeURIComponent(uniqueBlobName)}`;
-                fileId = `${account.address.toString()}/${uniqueBlobName}`;
+                fileUrl = `${shelbyApiUrl}/shelby/v1/blobs/${account?.address.toString()}/${encodeURIComponent(uniqueBlobName)}`;
+                fileId = `${account?.address.toString()}/${uniqueBlobName}`;
             }
 
             // --- SAVE METADATA TO BACKEND ---
@@ -221,7 +222,7 @@ export default function Composer({ type, insideModal, postId, onSuccess }: Compo
         if (!inputText.trim()) return;
 
         // Validation: Connected Wallet
-        if (!account || !wallet) {
+        if (!isAuthenticated || !account || !wallet) {
             toast.error("Please connect your wallet to continue!", {
                 style: {
                     background: '#EF4444',

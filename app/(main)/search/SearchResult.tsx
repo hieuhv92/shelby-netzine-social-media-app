@@ -2,11 +2,10 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import SearchBar from "@/components/ui/SearchBar";
 import PostCard from "@/components/post/PostCard";
 import UserCard from "@/components/users/UserCard";
 
-export default function SearchContent() {
+export default function SearchResult() {
     const searchParams = useSearchParams();
     const query = searchParams.get("q") || "";
     const [results, setResults] = useState({ users: [], posts: [] });

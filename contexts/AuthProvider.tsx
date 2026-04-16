@@ -9,6 +9,7 @@ import { RootState } from "@/lib/redux/store";
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.user);
+    const { isAuthenticated } = useSelector((state: RootState) => state.user);
     const { account, connected, isLoading: walletLoading } = useWallet();
     const isLoggingIn = useRef(false);
 
@@ -50,8 +51,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             }
 
             // 3. Case: No wallet connection (after F5 or manual Disconnect)
-            if (!connected) {
-                if (user.address) {
+            if (!connected && !isLoggingIn.current) {
+                if (isAuthenticated) {
+                    fetch('/api/auth/logout', { method: 'POST' })
+                        .catch(err => console.error("Logout error:", err));
                     dispatch(signOutUser());
                 }
                 // Turn off loading to exit Skeleton state and show the "Connect" button
@@ -61,7 +64,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
         handleAuth();
         // Re-run effect when the adapter finishes loading or connection state changes
-    }, [connected, walletLoading, account?.address, user.address, dispatch]);
+    }, [connected, walletLoading, account?.address, user.address, isAuthenticated, dispatch]);
 
     return <>{children}</>;
 }
