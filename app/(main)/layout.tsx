@@ -4,6 +4,7 @@ import Widgets from "@/components/navigation/Widgets";
 import CommentModal from "@/components/ui/modals/CommentModal";
 import PostModal from "@/components/ui/modals/PostModal";
 import EditProfileModal from "@/components/ui/modals/EditProfileModal";
+import MobileNav from "@/components/navigation/MobileNav";
 
 export default function MainLayout({
   children,
@@ -17,7 +18,7 @@ export default function MainLayout({
         <Sidebar />
 
         {/* Column 2: Dynamic Content(Feed, Post Detail, Profile, v.v.) */}
-        <div className="flex-grow border-l border-r border-gray-100 max-w-2xl w-full ml-[80px] xl:ml-[370px]">
+        <div className="flex-grow border-l border-r border-gray-100 max-w-2xl w-full sm:ml-[80px] xl:ml-[370px] pb-16 sm:pb-0">
           <HeaderInfo />
           <div>{children}</div>
         </div>
@@ -27,6 +28,8 @@ export default function MainLayout({
           <Widgets />
         </aside>
       </main >
+
+      <MobileNav />
 
       {/* Modals Section */}
       < CommentModal />

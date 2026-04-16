@@ -22,6 +22,7 @@ import {
 }
     from "@heroicons/react/24/outline";
 import { RootState } from "@/lib/redux/store";
+import { toast } from "sonner";
 
 export default function Sidebar() {
     const [showMore, setShowMore] = useState(false);
@@ -51,8 +52,22 @@ export default function Sidebar() {
         );
     };
 
+    const handleProfileClick = (e: React.MouseEvent) => {
+        if (!isAuthenticated) {
+            e.preventDefault();
+            toast("Please connect your wallet!", {
+                style: {
+                    background: '#F59E0B',
+                    color: '#fff',
+                    borderRadius: '8px'
+                },
+                duration: 4000,
+            });
+        }
+    };
+
     return (
-        <nav className="h-screen flex flex-col fixed top-0 p-3 xl:ml-24 w-max z-50">
+        <nav className="hidden sm:flex h-screen flex flex-col fixed top-0 p-3 xl:ml-24 w-max z-50">
             <div className="relative h-full flex flex-col">
                 <div className="py-2 flex justify-center xl:justify-start">
                     <Link href="/">
@@ -85,18 +100,13 @@ export default function Sidebar() {
                     </Link>
 
                     {/* Profile Link */}
-                    {!isAuthenticated ? (
-                        <div
-                            className="opacity-50 cursor-not-allowed w-fit"
-                            onClick={() => alert("Please connect your wallet!")}
-                        >
-                            <SidebarLink text="Profile" Icon={UserIcon} />
-                        </div>
-                    ) : (
-                        <Link href={`/profile/${username}`} className="block w-fit">
-                            <SidebarLink text="Profile" Icon={UserIcon} />
-                        </Link>
-                    )}
+                    <Link
+                        href={isAuthenticated ? `/profile/${username}` : "#"}
+                        onClick={handleProfileClick}
+                        className={`block w-fit ${!isAuthenticated ? "opacity-50" : ""}`}
+                    >
+                        <SidebarLink text="Profile" Icon={UserIcon} />
+                    </Link>
 
                     {/* More Link with Click Action */}
                     <div className="relative" ref={moreMenuRef}>
