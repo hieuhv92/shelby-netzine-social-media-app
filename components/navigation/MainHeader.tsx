@@ -41,56 +41,54 @@ export default function MainHeader() {
         const isExplore = pathname.startsWith('/explore');
         const isSearch = pathname.startsWith('/search');
         const pathParts = pathname.split('/');
+
+        // Logic for Connection pages (Followers/Following)
         const isConnections = pathParts.length === 4 && (pathParts[3] === 'followers' || pathParts[3] === 'following');
         const urlUsername = pathParts[2];
         const rawType = pathParts[3] || "";
         const connectionType = rawType.charAt(0).toUpperCase() + rawType.slice(1);
 
-        // 1. Case: Post Detail or Profile Page
-        // Both require a Back button and a dynamic title
-        if (isPostDetail || isProfileDetail) {
+        // Identify pages that require a Back button
+        const needsBackButton = isPostDetail || isProfileDetail || isExplore || isSearch;
+
+        if (needsBackButton) {
             return (
                 <div className="flex items-center">
+                    {/* Standard Back Button */}
                     <button
                         onClick={() => router.back()}
                         className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer mr-6"
                     >
                         <ArrowLeftIcon className="w-5 h-5 text-[#0F1419]" />
                     </button>
+
                     <div className="flex flex-col">
+                        {/* Main Title Logic */}
                         <h2 className="text-xl font-bold text-[#0F1419] leading-tight">
-                            {isConnections ? connectionType : (viewingUser?.user?.display_name || "Profile")}
+                            {isPostDetail && "Post"}
+                            {isExplore && "Explore"}
+                            {isSearch && "Search"}
+                            {isProfileDetail && (
+                                isConnections ? connectionType : (viewingUser?.user?.display_name || "Profile")
+                            )}
                         </h2>
-                        <p className="text-[13px] text-gray-500 font-normal">
-                            {isConnections
-                                ? `@${urlUsername || ""}`
-                                : `${viewingUser?.posts?.length || 0} Posts`}
-                        </p>
+
+                        {/* Subtitle Logic (Only Profile related pages) */}
+                        {isProfileDetail && (
+                            <p className="text-[13px] text-gray-500 font-normal">
+                                {isProfileDetail && (
+                                    isConnections
+                                        ? `@${urlUsername || ""}`
+                                        : `${viewingUser?.posts?.length || 0} Posts`
+                                )}
+                            </p>
+                        )}
                     </div>
                 </div>
             );
         }
 
-        // 2. Case: Explore or Search
-        if (isExplore || isSearch) {
-            return (
-                <div className="flex items-center">
-                    <button
-                        onClick={() => router.back()}
-                        className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer mr-6"
-                    >
-                        <ArrowLeftIcon className="w-5 h-5 text-[#0F1419]" />
-                    </button>
-                    <div className="flex flex-col">
-                        <h2 className="text-xl font-bold text-[#0F1419] leading-tight">
-                            {isExplore ? "Explore" : "Search"}
-                        </h2>
-                    </div>
-                </div>
-            )
-        }
-
-        // 3. Case: Standard Static Pages
+        // Standard static pages (Home, Notifications, etc.)
         const titles: Record<string, string> = {
             '/': 'Home',
             '/notifications': 'Notifications',
