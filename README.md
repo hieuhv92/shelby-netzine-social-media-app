@@ -1,6 +1,6 @@
-# Netzin Social Media App - Networking in Magazine Style.
+# Netzine Social Media App - Networking in Magazine Style.
 
-The Netzin application is built using Next.js, Supabase, and Shelby.
+The Netzine application is built using Next.js, Supabase, and Shelby.
 
 ## Tech Stack
 
@@ -25,68 +25,79 @@ The Netzin application is built using Next.js, Supabase, and Shelby.
 ## Project Structure
 
 ```
-Netzin/
-├── app/                        # Next.js App Router (Routing Layer)
-│   ├── layout.tsx              # Root Layout (HTML/Body, Redux, Wallet, Toast Providers)
-│   ├── globals.css             # Global Tailwind CSS styles
-│   ├── (auth)/                 # Authentication Route Group (Simple Layout)
-│   │   ├── layout.tsx          # Auth-specific Layout (e.g., Center card, no SideNav)
+Netzine/
+├── app/                                # Next.js App Router (Routing Layer)
+│   ├── layout.tsx                      # Root Layout (HTML/Body, Redux, Wallet, Toast Providers)
+│   ├── globals.css                     # Global Tailwind CSS styles
+│   ├── (auth)/                         # Authentication Route Group (Simplified UI)
+│   │   ├── layout.tsx                  # Auth-specific Layout (e.g., Center card, no SideNav)
 │   │   └── login/
-│   │       └── page.tsx        # Login Page
-│   ├── (main)/                 # Main App Route Group (Shared 3-Column Layout)
-│   │   ├── layout.tsx          # Main Shell (SideNav, Content Middle, RightSidebar)
-│   │   ├── page.tsx            # Home Feed Page (Renders Composer + FeedList)
+│   │       └── page.tsx                # Login Page (Wallet Connection & Authentication)
+│   ├── (main)/                         # Main App Route Group (Shared 3-Column Layout)
+│   │   ├── layout.tsx                  # Main Shell (SideNav, Main Content, RightSidebar)
+│   │   ├── page.tsx                    # Home Feed Page (Renders Composer + FeedList)
+│   │   ├── explore/
+│   │   │   └── page.tsx                # Discover content, trending topics, and suggestions
 │   │   ├── post/
-│   │   │   └── [id]/           # Post detail route
-│   │   │       └── page.tsx    # Single post view page
-│   │   └── profile/
-│   │       └── [id]/           # User profile route
-│   │           └── page.tsx    # User profile page
-│   └── api/                    # Backend API Routes (Serverless Functions)
-│       ├── auth/               # Auth handlers (Login, Logout, Session)
-│       ├── upload/             # Shelby Protocol file upload logic
-│       ├── posts/              # Posts CRUD (Create, Read, Update, Delete)
-│       └── users/              # User management & profile updates
-├── components/                 # React Components (UI Layer)
-│   ├── feed/                   # Feed-specific components
-│   │   ├── FeedList.tsx        # Infinite scroll or list of posts
-│   │   └── Composer.tsx        # The "Tweet-style" input box (with #F4AF01 icons)
-│   ├── post/                   # Post & Interaction components
-│   │   ├── PostCard.tsx        # Summary view for FeedList
-│   │   ├── PostContent.tsx      # Extended view for [id] page
-│   │   └── CommentItem.tsx     # Individual comment row
-│   ├── navigation/             # Core navigation UI
-│   │   ├── SideNav.tsx         # Fixed left-side menu
-│   │   ├── MainHeader.tsx      # Header information
-│   │   └── RightSidebar.tsx    # Sticky right-side panel (Trends/Suggestions)
-│   ├── ui/                     # Generic/Atomic UI components
-│   │   ├── modals/             # App-wide modals
-│   │   │   └── CommentModal.tsx
-│   │   │   └── PostModal.tsx
-│   │   └── SignUpPrompt.tsx    # Bottom banner for guests
-│   │   └── LikeButton.tsx      # Like Button
-│   └── providers/              # Context Providers
-│       ├── WalletProvider.tsx  # Blockchain/Wallet connection
-│       └── ToasterProvider.tsx # Notification system
-└── context/                    # Database configurations
-    └── AuthProvider.tsx        # Auth Provider
-├── lib/                        # Infrastructure, Utilities & Logic
-│   ├── shelby.ts               # Shelby Protocol client setup
-│   ├── supabase.ts             # Supabase client (Server & Client)
-│   ├── auth.ts                 # Server-side auth utilities (JWT, Cookies)
-│   ├── session-client.ts       # Client-side session management (useSession)
-│   ├── redux/                  # Global State Management
-│   │   ├── store.ts            # Redux Store configuration
-│   │   ├── StoreProvider.tsx   # Redux Provider for Layout
-│   │   └── slices/             # Redux Slices (userSlice, postSlice)
-│   └── utils.ts                # Tailwind merge, date formatting, etc.
-├── types/                      # TypeScript Definitions
-│   ├── index.ts                # Shared Entity types (Post, User, Comment)
-│   └── api.ts                  # API Request/Response schemas
-├── public/                     # Static assets
-│   └── assets/                 # Avatars, Logos, Default images
-└── supabase/                   # Database configurations
-    └── migrations/             # Migration files for Schema versioning
+│   │   │   └── [id]/                   # Post detail route
+│   │   │       └── page.tsx            # Single post view with thread conversations
+│   │   ├── profile/
+│   │   │   └── [id]/                   # User profile route
+│   │   │       └── page.tsx            # User profile page (Posts, Followers, Following)
+│   │   └── search/
+│   │           └── page.tsx            # Search results page for users and posts
+│   └── api/                            # Backend API Routes (Serverless Functions)
+│       ├── auth/                       # Auth handlers (Login, Logout, Session Sync)
+│       ├── upload/                     # Shelby Protocol file upload logic
+│       ├── posts/                      # Posts CRUD & Interactions (Like, Comment, Delete)
+│       └── users/                      # User management, profiles & suggestions
+│       └── search/                     # Global search indexing logic
+│       └── trending/                   # Trending hashtags & topics calculation
+├── components/                         # React Components (UI Layer)
+│   ├── feed/                           # Feed-specific components
+│   │   ├── FeedList.tsx                # Infinite scroll or list of posts
+│   │   ├── Composer.tsx                # Main input area with text, media, and auth validation
+│   │   └── TrendingList.tsx            # List of current hot topics and post volumes
+│   ├── post/                           # Post & Interaction components
+│   │   ├── PostCard.tsx                # Summary view for FeedList with Like/Comment logic
+│   │   ├── PostContent.tsx             # Extended view for post detail page
+│   │   └── CommentItem.tsx             # Individual comment row in a conversation
+│   ├── navigation/                     # Core Navigation UI
+│   │   ├── SideNav.tsx                 # Fixed Left Navigation (Desktop/Tablet menu & Post buttons)
+│   │   ├── MainHeader.tsx              # Sticky TopBar with dynamic titles, Back button, and Connect Wallet
+│   │   ├── RightSidebar.tsx            # Sticky Right Column (SearchBar, Trends, Who to Follow)
+│   │   └── MobileNav.tsx               # Bottom Navigation Bar & Floating Action Button (FAB) for Mobile
+│   ├── ui/                             # Generic/Atomic UI components
+│   │   ├── modals/                     # Global overlay components
+│   │   │   ├── CommentModal.tsx        # Reply modal with post context
+│   │   │   ├── EditProfileModal.tsx    # Edit modal with profile context
+│   │   │   └── PostModal.tsx           # Full-screen or popup composer modal
+│   │   ├── SignUpPrompt.tsx            # Call-to-action banner for unauthenticated guests
+│   │   ├── LikeButton.tsx              # Heart button with Optimistic Updates & Auth guards
+│   │   ├── FollowButton.tsx            # Relationship toggle with Redux sync & Auth guards
+│   │   └── SearchBox.tsx               # Reusable search input (Unified SearchBar component)
+│   └── providers/                      # Context Providers
+│       ├── WalletProvider.tsx          # Blockchain/Wallet adapter integration
+│       └── ToasterProvider.tsx         # Global notification system (Hot Toast)
+└── context/                            # Shared Contexts
+    └── AuthProvider.tsx                # Auth Sync logic (Wallet <-> Redux <-> Backend)
+├── lib/                                # Infrastructure, Utilities & Logic
+│   ├── shelby.ts                       # Shelby Protocol client & protocol setup
+│   ├── supabase.ts                     # Supabase client (Server & Client instances)
+│   ├── auth.ts                         # Server-side auth utilities (JWT, Cookies, Verification)
+│   ├── session-client.ts               # Client-side session management utilities
+│   ├── redux/                          # Global State Management
+│   │   ├── store.ts                    # Redux Store configuration (Middlewares, Reducers)
+│   │   ├── StoreProvider.tsx           # Redux Provider for App Layout
+│   │   └── slices/                     # Feature-specific slices (user, post, profile, modal)
+│   └── utils.ts                        # Shared helper functions (Date, Tailwind merge, etc.)
+├── types/                              # TypeScript Definitions
+│   ├── index.ts                        # Core Domain Models (Post, User, Comment, Profile)
+│   └── api.ts                          # API Request/Response interface schemas
+├── public/                             # Static assets
+│   └── assets/                         # Icons, Logos, and Default placeholders
+└── supabase/                           # Supabase Configuration
+    └── migrations/                     # SQL Migration files for database versioning
 ```
 
 ## Setup
