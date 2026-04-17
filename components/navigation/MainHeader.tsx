@@ -59,7 +59,10 @@ export default function MainHeader() {
                         onClick={() => router.back()}
                         className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition cursor-pointer mr-6"
                     >
-                        <ArrowLeftIcon className="w-5 h-5 text-[#0F1419]" />
+                        <ArrowLeftIcon
+                            className="w-5 h-5 text-[#0F1419]"
+                            strokeWidth={2.5}
+                        />
                     </button>
 
                     <div className="flex flex-col">
@@ -79,7 +82,7 @@ export default function MainHeader() {
                                 {isProfileDetail && (
                                     isConnections
                                         ? `@${urlUsername || ""}`
-                                        : `${viewingUser?.posts?.length || 0} Posts`
+                                        : `${posts?.length || 0} Posts`
                                 )}
                             </p>
                         )}

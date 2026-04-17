@@ -23,7 +23,6 @@ export default function ProfilePage() {
     const { username: myUsername } = useSelector((state: RootState) => state.user);
 
     const params = useParams();
-    const profileId = "a0d968d0-7f73-4677-a77f-88b02b99e71f";
     const username = params.username;
     const dispatch = useDispatch();
 
