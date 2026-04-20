@@ -150,37 +150,51 @@ Visit [http://localhost:3030](http://localhost:3030) to view the app.
 
 ## Database Schema
 
-### Users
-- `id`: UUID (primary key)
-- `wallet_address`: TEXT (unique)
-- `username`: TEXT (unique, optional)
-- `display_name`: TEXT (optional)
-- `avatar_url`: TEXT (optional)
-- `bio`: TEXT (optional)
+```mermaid
+erDiagram
+    USERS ||--o{ POSTS : "writes"
+    USERS ||--o{ LIKES : "likes"
+    USERS ||--o{ COMMENTS : "comments"
+    USERS ||--o{ FOLLOWS : "follows"
+    POSTS ||--o{ LIKES : "received"
+    POSTS ||--o{ COMMENTS : "has"
 
-### Posts
-- `id`: UUID (primary key)
-- `user_id`: UUID (foreign key to users)
-- `shelby_file_id`: TEXT
-- `shelby_file_url`: TEXT
-- `file_type`: TEXT ('image' | 'video')
-- `caption`: TEXT (optional)
+    USERS {
+        UUID id PK
+        TEXT wallet_address UK
+        TEXT username UK
+        TEXT display_name
+        TEXT avatar_url
+        TEXT bio
+    }
 
-### Likes
-- `id`: UUID (primary key)
-- `post_id`: UUID (foreign key to posts)
-- `user_id`: UUID (foreign key to users)
+    POSTS {
+        UUID id PK
+        UUID user_id FK
+        TEXT shelby_file_id
+        TEXT shelby_file_url
+        TEXT file_type
+        TEXT caption
+    }
 
-### Comments
-- `id`: UUID (primary key)
-- `post_id`: UUID (foreign key to posts)
-- `user_id`: UUID (foreign key to users)
-- `content`: TEXT
+    LIKES {
+        UUID id PK
+        UUID post_id FK
+        UUID user_id FK
+    }
 
-### Follows
-- `id`: UUID (primary key)
-- `follower_id`: UUID (foreign key to users)
-- `following_id`: UUID (foreign key to users)
+    COMMENTS {
+        UUID id PK
+        UUID post_id FK
+        UUID user_id FK
+        TEXT content
+    }
+
+    FOLLOWS {
+        UUID id PK
+        UUID follower_id FK
+        UUID following_id FK
+    }
 
 ## API Documentation
 
