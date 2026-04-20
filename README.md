@@ -198,28 +198,47 @@ erDiagram
 ```
 ## API Documentation
 
-### Authentication
-- `POST /api/auth/login` - Login với wallet address
-- `GET /api/auth/login` - Check authentication status
-- `POST /api/auth/logout` - Logout
+### 🔐 Authentication
 
-### Posts
-- `GET /api/posts` - Get all posts (with pagination)
-- `GET /api/posts/[id]` - Get post by ID
-- `DELETE /api/posts/[id]` - Delete post
-- `POST /api/posts/[id]/like` - Like post
-- `DELETE /api/posts/[id]/like` - Unlike post
-- `GET /api/posts/[id]/comments` - Get comments
-- `POST /api/posts/[id]/comments` - Create comment
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Login với wallet address |
+| `GET` | `/api/auth/login` | Check authentication status |
+| `POST` | `/api/auth/logout` | Logout |
 
-### Users
-- `GET /api/users/[id]` - Get user profile
-- `GET /api/users/[id]/follow` - Check follow status
-- `POST /api/users/[id]/follow` - Follow user
-- `DELETE /api/users/[id]/follow` - Unfollow user
+### 📝 Posts & Interactions
 
-### Upload
-- `POST /api/upload` - Upload file metadata to Supabase (after Shelby upload)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/posts` | Get all posts (with pagination) |
+| `GET` | `/api/posts/[id]` | Get post by ID |
+| `DELETE` | `/api/posts/[id]` | Delete post (Owner only) |
+| `POST` | `/api/posts/[id]/like` | Like post |
+| `DELETE` | `/api/posts/[id]/like` | Unlike post |
+| `GET` | `/api/posts/[id]/comments` | Get comments list |
+| `POST` | `/api/posts/[id]/comments` | Create new comment |
+
+### 🔍 Discovery
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/search` | Search users or posts by keywords |
+| `GET` | `/api/trending` | Get trending posts worldwide |
+
+### 👤 Users
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/users/[id]` | Get user profile details |
+| `GET` | `/api/users/[id]/follow` | Check follow status |
+| `POST` | `/api/users/[id]/follow` | Follow user |
+| `DELETE` | `/api/users/[id]/follow` | Unfollow user |
+
+### ☁️ Media Upload
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/upload` | Sync file metadata to Supabase (after Shelby upload) |
 
 ## Important Notes
 
