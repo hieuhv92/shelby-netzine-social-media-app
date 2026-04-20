@@ -195,7 +195,7 @@ erDiagram
         UUID follower_id FK
         UUID following_id FK
     }
-
+```
 ## API Documentation
 
 ### Authentication
