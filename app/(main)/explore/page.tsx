@@ -5,6 +5,15 @@ import SearchBox from "@/components/ui/SearchBox";
 import TrendingList from "@/components/feed/TrendingList";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 
+// Mapping keywords for each tab to get relevant images
+const TAB_BANNER_URLS: Record<string, string> = {
+    "For you": "/assets/explore_default.jpg",
+    "Trending": "/assets/explore_default.jpg",
+    "News": "/assets/explore_default.jpg",
+    "Sports": "/assets/explore_default.jpg",
+    "Entertainment": "/assets/explore_default.jpg"
+};
+
 export default function ExplorePage() {
     const tabs = ["For you", "Trending", "News", "Sports", "Entertainment"];
     const [activeTab, setActiveTab] = useState("For you");
@@ -58,40 +67,57 @@ export default function ExplorePage() {
 
             {/* 3. Tab Content */}
             <div className="flex flex-col">
-                {activeTab === "For you" && (
-                    <>
-                        {/* Hero Section - Featured content for you */}
-                        <div className="relative h-64 w-full bg-gray-200 overflow-hidden cursor-pointer group">
+                {/* Common Hero Section for most tabs to keep it "xịn" */}
+                {activeTab !== "For you" && (
+                    <div className="relative h-64 w-full bg-gray-900 overflow-hidden cursor-pointer group">
+                        {/* Dynamic Image */}
+                        <div className="relative w-full h-full overflow-hidden group">
+                            {/* Dynamic Image */}
                             <img
-                                src="/assets/banner_default.jpg"
-                                alt="Featured"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                key={activeTab}
+                                src={TAB_BANNER_URLS[activeTab]}
+                                alt={activeTab}
+                                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                             />
-                            <div className="absolute bottom-0 left-0 p-4 text-white bg-gradient-to-t from-black/60 to-transparent w-full">
-                                <p className="text-sm font-medium">Global Events • LIVE</p>
-                                <h2 className="text-2xl font-bold">What's happening around the world</h2>
+                        </div>
+
+                        {/* Overlay Gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+
+                        {/* Content Overlay */}
+                        <div className="absolute bottom-0 left-0 p-6 text-white w-full">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <span className="flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                </span>
+                                <p className="text-[12px] font-bold uppercase tracking-widest text-gray-200">
+                                    {activeTab === "For you" ? "Global Events" : activeTab} • LIVE
+                                </p>
                             </div>
+                            <h2 className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight">
+                                {activeTab === "For you"
+                                    ? "What's happening around the world"
+                                    : `Top updates in ${activeTab.toLowerCase()}`}
+                            </h2>
                         </div>
-                        <div className="mt-2">
-                            <TrendingList limit={10} />
-                        </div>
-                    </>
-                )}
-
-                {activeTab === "Trending" && (
-                    <div className="flex flex-col">
-                        <h2 className="text-xl font-bold p-4 border-b border-gray-100">United States Trends</h2>
-                        <TrendingList /> {/* Shows full list */}
                     </div>
                 )}
 
-                {/* Placeholder for other categories */}
-                {["News", "Sports", "Entertainment"].includes(activeTab) && (
-                    <div className="flex flex-col items-center justify-center p-20 text-gray-500">
-                        <p className="text-lg font-medium">No {activeTab} content right now</p>
-                        <p className="text-sm">Check back later to see what's happening!</p>
-                    </div>
-                )}
+                {/* Tab specific content */}
+                <div className={activeTab !== "Trending" ? "mt-2" : ""}>
+                    {activeTab === "Trending" ? (
+                        <div className="flex flex-col">
+                            <h2 className="text-xl font-bold p-4 border-b border-gray-100">Global Trends</h2>
+                            <TrendingList />
+                        </div>
+                    ) : (
+                        <TrendingList
+                            limit={activeTab === "For you" ? 10 : undefined}
+                            category={activeTab === "For you" ? undefined : activeTab.toLowerCase()}
+                        />
+                    )}
+                </div>
             </div>
         </main>
     );
